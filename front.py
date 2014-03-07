@@ -1,0 +1,218 @@
+__author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
+__copyright__ = "Copyright (c) Sam Nicholls"
+__version__ = "0.0.1"
+__maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
+
+import argparse
+import numpy as np
+import pydot
+
+from sklearn.cross_validation import cross_val_score, StratifiedKFold
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.tree import export_graphviz
+from sklearn.externals.six import StringIO
+
+import frontier
+
+CLASSES = {
+        "pass": {
+            "class": ["pass"],
+            "names": ["pass", "passed"],
+            "code": 1,
+        },
+        "fail": {
+            "class": ["fail"],
+            "names": ["fail", "failed"],
+            "code": -1,
+        },
+        "warn": {
+            "class": ["warn"],
+            "names": ["warn", "warning"],
+            "code": 0,
+        },
+}
+
+PARAMETER_SETS = {
+    "AQC": [
+        "error-rate",
+        "insert-size-average",
+        "average-quality",
+
+        "fwd-percent-insertions-above-baseline",
+        "fwd-percent-insertions-below-baseline",
+        "fwd-percent-deletions-above-baseline",
+        "fwd-percent-deletions-below-baseline",
+        "rev-percent-insertions-above-baseline",
+        "rev-percent-insertions-below-baseline",
+        "rev-percent-deletions-above-baseline",
+        "rev-percent-deletions-below-baseline",
+
+        "A-percent-max-baseline-deviation",
+        "C-percent-max-baseline-deviation",
+        "G-percent-max-baseline-deviation",
+        "T-percent-max-baseline-deviation",
+        "A-percent-total-mean-baseline-deviation",
+        "C-percent-total-mean-baseline-deviation",
+        "G-percent-total-mean-baseline-deviation",
+        "T-percent-total-mean-baseline-deviation",
+        "quality-dropoff-rev-high-iqr-max-contiguous-read-cycles",
+        "quality-dropoff-fwd-high-iqr-max-contiguous-read-cycles",
+        "quality-dropoff-fwd-mean-runmed-decline-max-contiguous-read-cycles",
+        "quality-dropoff-rev-mean-runmed-decline-max-contiguous-read-cycles",
+
+        "quality-dropoff-fwd-mean-runmed-decline-high-value",
+        "quality-dropoff-rev-mean-runmed-decline-high-value",
+        "quality-dropoff-fwd-mean-runmed-decline-low-value",
+        "quality-dropoff-rev-mean-runmed-decline-low-value",
+    ],
+    "BASELINE": {
+        "find": ["baseline"],
+    },
+    "NOBASELINE": {
+        "exclude": ["baseline"],
+    },
+    "MARP": {
+        "find": ["mean", "percent", "rate", "average"],
+    },
+}
+
+DATA_SETS = {
+    "IGNWARN": {
+        "codes": [1, -1],
+    },
+    "WARNPASS": {
+        "codes": [1, -1],
+        "recode": {
+            "warn": 1
+        }
+    },
+    "WARNFAIL": {
+        "codes": [1, -1],
+        "recode": {
+            "warn": -1
+        }
+    },
+}
+class QC:
+    def __init__(self, args):
+        #TODO Naughtly global-like behaviour going on here...
+        self.CLASSES = CLASSES
+        self.PARAMETER_SETS = PARAMETER_SETS
+        self.DATA_SETS = DATA_SETS
+
+        self.data_dir = args.data_dir
+        self.target_path = args.target_path
+
+        self.data_set = args.data_set.upper()
+        self.parameter_set = args.param_set.upper()
+
+        self.no_log = args.no_log
+        self.folds = args.folds
+
+        # Handle invalid options
+        if self.parameter_set not in self.PARAMETER_SETS and self.parameter_set != "ALL":
+            raise Exception("%s is not a valid option for parameter_set" % self.parameter_set)
+        if self.data_set not in self.DATA_SETS and self.data_set != "ALL":
+            raise Exception("%s is not a valid option for data_set" % self.data_set)
+
+        # Process data set
+        # Use "ALL" classes unless otherwise told
+        self.override_codes = None
+        if self.data_set != "ALL":
+            #TODO Warn when using ALL as codes and recode will be ignored
+            if "codes" in self.DATA_SETS[self.data_set]:
+                self.override_codes = self.DATA_SETS[self.data_set]["codes"]
+
+            if "recode" in self.DATA_SETS[self.data_set]:
+                for class_label, new_code in self.DATA_SETS[self.data_set]["recode"].items():
+                    print("[NOTE] Class %s will be encoded as %d instead of %d" %
+                            (class_label, new_code, self.CLASSES[class_label]["code"]))
+                    #TODO Check this code is actually used?
+                    self.CLASSES[class_label]["code"] = new_code
+                    self.CLASSES[class_label]["recoded"] = True
+
+        self.statplexer = frontier.Statplexer(
+            self.data_dir,
+            self.target_path,
+            CLASSES)
+
+        # Process parameter_set
+        if self.parameter_set == "ALL":
+            self.regressors = self.statplexer.list_regressors()
+        elif "find" in self.PARAMETER_SETS[self.parameter_set]:
+            self.regressors = self.statplexer.find_regressors(self.PARAMETER_SETS[self.parameter_set]["find"])
+        elif "exclude" in self.PARAMETER_SETS[self.parameter_set]:
+            self.regressors = self.statplexer.exclude_regressors(self.PARAMETER_SETS[self.parameter_set]["exclude"])
+        else:
+            #TODO Check this is a list, not a dict with incorrect keys
+            self.regressors = self.PARAMETER_SETS[self.parameter_set]
+
+        self.execute()
+
+    def execute(self):
+        data, target = self.statplexer.get_data_by_target(self.regressors, self.override_codes)
+
+        # Sanity
+        if len(data) != len(target):
+            print "[FAIL] Number of INPUTS does not match number of TARGETS!"
+            sys.exit(0)
+
+        # Init
+        clf = DecisionTreeClassifier()
+        kf = StratifiedKFold(target, n_folds=self.folds)
+
+        importances = []
+        scores = np.zeros(self.folds)
+
+        count = 0
+        for train_index, test_index in kf:
+            X_train, X_test = data[train_index], data[test_index]
+            y_train, y_test = target[train_index], target[test_index]
+            clf.fit(X_train, y_train)
+
+            score = clf.score(X_test, y_test)
+            scores[count] = score
+            count += 1
+
+            importance = clf.tree_.compute_feature_importances()
+            importances.append(importance)
+
+        #cv_scores = cross_val_score(clf, data, target, cv=kf)
+
+        imps = {}
+        for importance_run in importances:
+            for i, entry in enumerate(importance_run):
+                if self.regressors[i] not in imps:
+                    imps[self.regressors[i]] = []
+                imps[self.regressors[i]].append(entry)
+        imp_means = {}
+        for name, score_list in imps.items():
+            imp_means[name] = sum(score_list)/len(score_list)
+        importance = imp_means
+
+        # Draw full fit tree
+        clf.fit(data, target)
+        dot_data = StringIO()
+        export_graphviz(clf, out_file=dot_data)
+        graph = pydot.graph_from_dot_data(dot_data.getvalue())
+
+        total_used = len(target)
+        if not self.no_log:
+            self.statplexer.write_log(self.data_set, self.parameter_set, self.regressors, scores, self.folds, importance, total_used, graph)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('data_dir', metavar='data_dir',
+            help=("Path to directory containing bamcheckr outputs"))
+    parser.add_argument('target_path', metavar='target_path',
+            help=("Path to tabulated QC summary file"))
+    parser.add_argument('-d', '--data_set', metavar='data_set', default="all",
+            help=("Data set [all]"))
+    parser.add_argument('-p', '--param_set', metavar='parameter_set', default="all",
+            help=("Parameter set [all]"))
+    parser.add_argument('-f', '--folds', metavar='folds', type=int, default=10,
+            help=("Number of Cross Validation Folds [10]"))
+    parser.add_argument('--no_log', action='store_true',
+            help=("Do not output a log file"))
+    QC(parser.parse_args())
