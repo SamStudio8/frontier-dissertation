@@ -146,26 +146,24 @@ class Statplexer(object):
         targ_np_array = np.empty([total])
 
         counter = 0
+        levels = []
         for bam in sorted(self._data):
             lanelet = bam.split(".")[0]
             target = self._targets[lanelet]
             if targets:
-                if target in targets:
-                    bam_n = np.zeros(len(names))
-                    for j, regressor in enumerate(names):
-                        bam_n[j] = self._data[bam].summary[regressor]
-                    data_np_array[counter] = bam_n
-                    targ_np_array[counter] = self._targets[lanelet]
-                    counter += 1
-            else:
-                bam_n = np.zeros(len(names))
-                for j, regressor in enumerate(names):
-                    bam_n[j] = self._data[bam].summary[regressor]
-                data_np_array[counter] = bam_n
-                targ_np_array[counter] = self._targets[lanelet]
-                counter += 1
+                if target not in targets:
+                    continue
 
-        return data_np_array, targ_np_array
+            bam_n = np.zeros(len(names))
+            for j, regressor in enumerate(names):
+                bam_n[j] = self._data[bam].summary[regressor]
+            data_np_array[counter] = bam_n
+            targ_np_array[counter] = self._targets[lanelet]
+            if self._targets[lanelet] not in levels:
+                levels.append(self._targets[lanelet])
+            counter += 1
+
+        return data_np_array, targ_np_array, sorted(levels)
 
     def get_targets(self):
         np_array = np.empty([len(self)])

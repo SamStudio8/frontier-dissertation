@@ -152,7 +152,7 @@ class QC:
         self.execute()
 
     def execute(self):
-        data, target = self.statplexer.get_data_by_target(self.regressors, self.override_codes)
+        data, target, levels = self.statplexer.get_data_by_target(self.regressors, self.override_codes)
 
         # Sanity
         if len(data) != len(target):
@@ -171,6 +171,7 @@ class QC:
             pdf_path = "pdf/" + datetime.datetime.now().strftime("%Y-%m-%d_%H%M") + "__" + self.data_set + "_" + self.parameter_set + "_" + "/"
             os.makedirs(pdf_path)
 
+        confusion = np.zeros([len(levels), len(levels)])
         for train_index, test_index in kf:
             X_train, X_test = data[train_index], data[test_index]
             y_train, y_test = target[train_index], target[test_index]
@@ -185,6 +186,10 @@ class QC:
             importance = clf.tree_.compute_feature_importances()
             importances.append(importance)
 
+            # Compute confusion matrix
+            y_pred = clf.predict(X_test)
+            confusion += confusion_matrix(y_test, y_pred)
+
             # Draw the graph
             if not self.no_log:
                 dot_data = StringIO()
@@ -194,6 +199,8 @@ class QC:
                 graph.write_pdf(pdf_filename)
 
         #cv_scores = cross_val_score(clf, data, target, cv=kf)
+        confusion = confusion/self.folds
+        print(confusion)
 
         imps = {}
         for importance_run in importances:
