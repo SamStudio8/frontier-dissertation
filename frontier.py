@@ -63,7 +63,6 @@ class Statplexer(object):
 
             auto_qc_class = classify_label(classes, fields[4])
             auto_qc_code = encode_class(classes, auto_qc_class)
-            count_class(classes, auto_qc_class)
 
             targets[lanelet] = auto_qc_code
 
@@ -78,6 +77,9 @@ class Statplexer(object):
                     self._targets[lanelet] = targets[lanelet]
                     self._data[bam] = BamcheckReader(bampath)
                     self._len += 1
+
+                    class_label = decode_class(classes, targets[lanelet])
+                    count_class(classes, class_label)
                 else:
                     print "[WARN] BAM missing TARGET"
 
