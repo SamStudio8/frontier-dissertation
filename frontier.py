@@ -174,17 +174,20 @@ class Statplexer(object):
             np_array[i] = self._targets[lanelet]
         return np_array
 
-    def count_targets_by_class(self):
+    def count_targets_by_class(self, targets=None):
         counts = {}
         for class_label in self._classes:
             counts[class_label] = 0
 
-        for target in self._targets:
-            class_label = decode_class(self._classes, self._targets[target])
+        if targets is None:
+            targets = self._targets.values()
+
+        for target in targets:
+            class_label = decode_class(self._classes, target)
             counts[class_label] += 1
         return counts
 
-    def write_log(self, log_filename, pdf_filename, data_set, param_set, regressors, scores, folds, importance, total_used):
+    def write_log(self, log_filename, pdf_filename, data_set, param_set, regressors, used_targets, scores, folds, importance):
 
         def write(message):
             sys.stdout.write(message)
@@ -198,10 +201,10 @@ class Statplexer(object):
         write("\n")
         write("Class Def\t" + "\t".join([cl for cl in sorted(self._classes)]) + "\n")
         write("Class Read\t" + "\t".join([str(v["count"]) for k,v in sorted(self._classes.items())]) + "\n")
-        write("Class Used\t" + "\t".join([str(v) for k,v in sorted(self.count_targets_by_class().items())]) + "\n")
+        write("Class Used\t" + "\t".join([str(v) for k,v in sorted(self.count_targets_by_class(used_targets).items())]) + "\n")
         write("\n")
         write("Total Read\t%d\n" % len(self))
-        write("Total Used\t%d\n" % total_used)
+        write("Total Used\t%d\n" % len(used_targets))
         write("\n")
         write("Param Set\t%s\n" % param_set)
         write("Param Count\t%d\n" % len(regressors))

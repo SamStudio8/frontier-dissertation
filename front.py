@@ -10,9 +10,9 @@ import pydot
 import os
 
 from sklearn.cross_validation import cross_val_score, StratifiedKFold
-from sklearn.tree import DecisionTreeClassifier
-from sklearn.tree import export_graphviz
 from sklearn.externals.six import StringIO
+from sklearn.metrics import confusion_matrix
+from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
 import frontier
 
@@ -209,7 +209,7 @@ class QC:
         total_used = len(target)
         if not self.no_log:
             log_filename = "log/" + datetime.datetime.now().strftime("%Y-%m-%d_%H%M") + "__" + self.data_set + "_" + self.parameter_set + "_" + str(int(scores.mean() * 100)) + ".txt"
-            self.statplexer.write_log(log_filename, pdf_path, self.data_set, self.parameter_set, self.regressors, scores, self.folds, importance, total_used)
+            self.statplexer.write_log(log_filename, pdf_path, self.data_set, self.parameter_set, self.regressors, target, scores, self.folds, importance)
 
 
 if __name__ == "__main__":
