@@ -4,8 +4,10 @@ __version__ = "0.0.1"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
 import argparse
+import datetime
 import numpy as np
 import pydot
+import os
 
 from sklearn.cross_validation import cross_val_score, StratifiedKFold
 from sklearn.tree import DecisionTreeClassifier
@@ -165,17 +167,31 @@ class QC:
         scores = np.zeros(self.folds)
 
         count = 0
+        if not self.no_log:
+            pdf_path = "pdf/" + datetime.datetime.now().strftime("%Y-%m-%d_%H%M") + "__" + self.data_set + "_" + self.parameter_set + "_" + "/"
+            os.makedirs(pdf_path)
+
         for train_index, test_index in kf:
             X_train, X_test = data[train_index], data[test_index]
             y_train, y_test = target[train_index], target[test_index]
             clf.fit(X_train, y_train)
 
+            # Score the fit
             score = clf.score(X_test, y_test)
             scores[count] = score
             count += 1
 
+            # Calculate feature importance
             importance = clf.tree_.compute_feature_importances()
             importances.append(importance)
+
+            # Draw the graph
+            if not self.no_log:
+                dot_data = StringIO()
+                export_graphviz(clf, out_file=dot_data)
+                graph = pydot.graph_from_dot_data(dot_data.getvalue())
+                pdf_filename = pdf_path + str(count) + ".pdf"
+                graph.write_pdf(pdf_filename)
 
         #cv_scores = cross_val_score(clf, data, target, cv=kf)
 
@@ -190,15 +206,10 @@ class QC:
             imp_means[name] = sum(score_list)/len(score_list)
         importance = imp_means
 
-        # Draw full fit tree
-        clf.fit(data, target)
-        dot_data = StringIO()
-        export_graphviz(clf, out_file=dot_data)
-        graph = pydot.graph_from_dot_data(dot_data.getvalue())
-
         total_used = len(target)
         if not self.no_log:
-            self.statplexer.write_log(self.data_set, self.parameter_set, self.regressors, scores, self.folds, importance, total_used, graph)
+            log_filename = "log/" + datetime.datetime.now().strftime("%Y-%m-%d_%H%M") + "__" + self.data_set + "_" + self.parameter_set + "_" + str(int(scores.mean() * 100)) + ".txt"
+            self.statplexer.write_log(log_filename, pdf_path, self.data_set, self.parameter_set, self.regressors, scores, self.folds, importance, total_used)
 
 
 if __name__ == "__main__":

@@ -3,7 +3,6 @@ __copyright__ = "Copyright (c) Sam Nicholls"
 __version__ = "0.0.1"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
-import datetime
 import numpy as np
 import os
 import sys
@@ -183,9 +182,7 @@ class Statplexer(object):
             counts[class_label] += 1
         return counts
 
-    def write_log(self, data_set, param_set, regressors, scores, folds, importance, total_used, graph):
-        log_filename = "log/" + datetime.datetime.now().strftime("%Y-%m-%d_%H%M") + "__" + data_set + "_" + param_set + "_" + str(int(scores.mean() * 100)) + ".txt"
-        pdf_filename = "pdf/" + datetime.datetime.now().strftime("%Y-%m-%d_%H%M") + "__" + data_set + "_" + param_set + "_" + str(int(scores.mean() * 100)) + ".pdf"
+    def write_log(self, log_filename, pdf_filename, data_set, param_set, regressors, scores, folds, importance, total_used):
 
         def write(message):
             sys.stdout.write(message)
@@ -220,4 +217,3 @@ class Statplexer(object):
         write("Decision PDF\t%s\n" % pdf_filename)
         write("********")
         o.close()
-        graph.write_pdf(pdf_filename)
