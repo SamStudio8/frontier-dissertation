@@ -9,7 +9,7 @@ files = {
     "uc-gwas": {
         "path": "../vcf/uc-seq.vcf.gz.q",
         "group": 0
-    }
+    },
     "cd-ichip": {
         "path": "../vcf/cd.ichip.vcf.gz.q",
         "group": 1
