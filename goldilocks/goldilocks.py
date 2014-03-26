@@ -3,19 +3,19 @@ from math import floor, ceil
 
 files = {
     "cd-gwas": {
-        "path": "../vcf/cd-seq.vcf.gz.q",
+        "path": "../../vcf/cd-seq.vcf.gz.q",
         "group": 0
     },
     "uc-gwas": {
-        "path": "../vcf/uc-seq.vcf.gz.q",
+        "path": "../../vcf/uc-seq.vcf.gz.q",
         "group": 0
     },
     "cd-ichip": {
-        "path": "../vcf/cd.ichip.vcf.gz.q",
+        "path": "../../vcf/cd.ichip.vcf.gz.q",
         "group": 1
     },
     "uc-ichip": {
-        "path": "../vcf/uc.ichip.vcf.gz.q",
+        "path": "../../vcf/uc.ichip.vcf.gz.q",
         "group": 1
     },
 }
