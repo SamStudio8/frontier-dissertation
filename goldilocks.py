@@ -113,7 +113,7 @@ for bucket in gwas_region_variant_buckets:
     if bucket > floor(q_low) and bucket < ceil(q_high):
         candidates += gwas_region_variant_buckets[bucket]
 
-print "WND\tMED\tMAX\tCHR\tPOS (S-E)"
+print "WND\tGWAS\tiCHIP\tCHR\tPOSITIONS"
 for region in sorted(regions, key=lambda x: abs(regions[x]["gwas_count"] - q_median)):
     if region in candidates:
         if regions[region]["ichip_count"] > regions[region]["gwas_count"]:
