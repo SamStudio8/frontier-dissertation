@@ -21,7 +21,7 @@ files = {
 }
 
 LENGTH = 1000000
-STRIDE = 500000
+STRIDE = 500000 # NOTE STRIDE must be non-zero, 1 is a bad idea
 MED_WINDOW = 12.5
 GRAPHING = False
 
@@ -83,10 +83,10 @@ for chrno, size in sorted(chr_max_len.items()):
             "pos_start": region_s,
             "pos_end": region_s+LENGTH
         }
-        gwas_num_region_variants = np.sum(chro_gwas[region_s:region_s+LENGTH])
+        gwas_num_region_variants = np.sum(chro_gwas[region_s:region_s+LENGTH-1])
         regions[region_i]["gwas_count"] = gwas_num_region_variants
 
-        ichip_num_region_variants = np.sum(chro_ichip[region_s:region_s+LENGTH])
+        ichip_num_region_variants = np.sum(chro_ichip[region_s:region_s+LENGTH-1])
         regions[region_i]["ichip_count"] = ichip_num_region_variants
 
         # Record this region (if it contained variants)
