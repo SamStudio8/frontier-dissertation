@@ -14,7 +14,7 @@ from sklearn.externals.six import StringIO
 from sklearn.metrics import confusion_matrix
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
-import frontier
+from Frontier import frontier
 
 CLASSES = {
         "pass": {
