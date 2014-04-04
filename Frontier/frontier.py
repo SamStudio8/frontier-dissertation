@@ -75,7 +75,7 @@ class Statplexer(object):
                 lanelet = bam.split(".")[0]
                 if lanelet in targets:
                     self._targets[lanelet] = targets[lanelet]
-                    self._data[bam] = BamcheckReader(bampath)
+                    self._data[bam] = BamcheckReader(bampath, auto_close=True)
                     self._len += 1
 
                     class_label = decode_class(classes, targets[lanelet])

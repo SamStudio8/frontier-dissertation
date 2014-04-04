@@ -8,14 +8,16 @@ __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 class BamcheckReader(object):
     """Wraps a file handler and provides access to stats contents"""
 
-    def __init__(self, filepath):
+    def __init__(self, filepath, auto_close=False):
         """Constructs the read only file handler and parses the header"""
         self.summary = SummaryNumbers()
 
         self.handler = open(filepath, 'r')
         self.handler.seek(0)
         self.process_file()
-        self.close()
+
+        if auto_close:
+            self.close()
 
     def process_file(self):
         """Parse lines in to dict"""
@@ -37,7 +39,7 @@ class BamcheckReader(object):
 
     def __iter__(self):
         self.handler.seek(0) # Reset the file pointer
-        return self
+        return self.handler
 
 
 class SummaryNumbers(dict):
