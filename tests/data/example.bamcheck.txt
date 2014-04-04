@@ -30,14 +30,6 @@ SN	inward oriented pairs:	20577242
 SN	outward oriented pairs:	3140
 SN	pairs with other orientation:	3711
 SN	pairs on different chromosomes:	31535
-SN	fwd percent insertions above baseline:	1.43135383851191
-SN	fwd percent insertions below baseline:	0.686265539012562
-SN	fwd percent deletions above baseline:	1.38326380878871
-SN	fwd percent deletions below baseline:	0.44923551909251
-SN	rev percent insertions above baseline:	1.08264446659241
-SN	rev percent insertions below baseline:	0.457290262062496
-SN	rev percent deletions above baseline:	1.15931214598243
-SN	rev percent deletions below baseline:	0.413119424753248
 SN	contiguous cycle dropoff count:	36
 SN	fwd.percent.insertions.above.baseline:	1.43135383851191
 SN	fwd.percent.insertions.below.baseline:	0.686265539012562
