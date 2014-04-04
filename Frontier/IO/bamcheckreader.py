@@ -34,16 +34,20 @@ class BamcheckReader(object):
             fields = line.split("\t")
             if fields[0] == "SN":
                 name = tidy_key(fields[1])
+                try:
+                    value = float(fields[2])
+                except ValueError:
+                    value = fields[2]
 
                 # Check whether key already exists in summary
                 if name in self.summary:
                     print "[NOTE] Duplicate key for %s found in %s" % (name, self.handler.name)
 
                     # Check whether the duplicate value is equal to the current
-                    if self.summary[name] != fields[2]:
+                    if self.summary[name] != value:
                         raise Exception("[FAIL] Duplicate differing key for %s found in %s" % (name, self.handler.name))
                     continue
-                self.summary[name] = fields[2]
+                self.summary[name] = value
 
     def close(self):
         """Close the file handler"""
