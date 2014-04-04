@@ -5,6 +5,11 @@ __copyright__ = "Copyright (c) Sam Nicholls"
 __version__ = "0.0.1"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
+def tidy_key(key):
+    key = key[:-1].replace(" ", "-")
+    key = key.replace(".", "-")
+    return key.strip()
+
 class BamcheckReader(object):
     """Wraps a file handler and provides access to stats contents"""
 
@@ -28,9 +33,16 @@ class BamcheckReader(object):
                 continue
             fields = line.split("\t")
             if fields[0] == "SN":
-                name = fields[1][:-1].replace(" ", "-")
-                name = name.replace(".", "-")
-                name = name.strip()
+                name = tidy_key(fields[1])
+
+                # Check whether key already exists in summary
+                if name in self.summary:
+                    print "[NOTE] Duplicate key for %s found in %s" % (name, self.handler.name)
+
+                    # Check whether the duplicate value is equal to the current
+                    if self.summary[name] != fields[2]:
+                        raise Exception("[FAIL] Duplicate differing key for %s found in %s" % (name, self.handler.name))
+                    continue
                 self.summary[name] = fields[2]
 
     def close(self):
