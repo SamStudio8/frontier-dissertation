@@ -1,5 +1,6 @@
 frontier
 ========
 
-# Run tests
+### Run tests
 python -m tests/bamcheckreader
+python -m tests/frontier
