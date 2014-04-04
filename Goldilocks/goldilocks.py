@@ -1,24 +1,20 @@
 import numpy as np
 from math import floor, ceil
 
-files = {
-    "cd-gwas": {
-        "path": "../../vcf/cd-seq.vcf.gz.q",
-        "group": 0
-    },
-    "uc-gwas": {
-        "path": "../../vcf/uc-seq.vcf.gz.q",
-        "group": 0
-    },
-    "cd-ichip": {
-        "path": "../../vcf/cd.ichip.vcf.gz.q",
-        "group": 1
-    },
-    "uc-ichip": {
-        "path": "../../vcf/uc.ichip.vcf.gz.q",
-        "group": 1
-    },
-}
+path_list = open("paths.g")
+files = {}
+current_group = None
+for line in path_list:
+    if line.startswith("#"):
+        current_group = line[1:].strip()
+        continue
+    if current_group is not None:
+        fields = line.split("\t")
+        files[fields[0]] = {
+            "path": fields[1].strip(),
+            "group": int(current_group)
+        }
+path_list.close()
 
 LENGTH = 1000000
 STRIDE = 500000 # NOTE STRIDE must be non-zero, 1 is a bad idea
