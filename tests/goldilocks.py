@@ -21,6 +21,7 @@ TEST_DATA = {
         1: [
             [1, 'G', 'A'],
             [4, 'G', 'A'],
+            [21, 'G', 'A'],
             [LARGEST_POS[1], 'G', 'A'],
         ],
         2: [
@@ -177,13 +178,13 @@ class TestGoldilocks(unittest.TestCase):
 ################################################################################
 # GROUP0
 # CHR 1                                                            Expected
-#             4     10 13          25                                Size    i
-#       1 |*==*=====*==*===========*========================*| 50
+#             4     10 13      21  25                                Size    i
+#       1 |*==*=====*==*=======*===*========================*| 50
 #          |        |                                                 3      0
 #               |        |                                            2      1
 #                    |        |                                       1      2
-#                         |        |                                  1      3
-#                              |        |                             1      4
+#                         |        |                                  2      3
+#                              |        |                             2      4
 #                                   |        |                        0      5
 #                                        |        |                   0      6
 #                                             |        |              0      7
@@ -220,8 +221,8 @@ class TestGoldilocks(unittest.TestCase):
                 0: 3,
                 1: 2,
                 2: 1,
-                3: 1,
-                4: 1,
+                3: 2,
+                4: 2,
                 5: 0,
                 6: 0,
                 7: 0,
@@ -244,22 +245,21 @@ class TestGoldilocks(unittest.TestCase):
             self.assertEquals(GROUP0_EXPECTED_BUCKETS[i], bucket)
 
     def test_content_group_buckets(self):
-        # NOTE region_i == 9 is from a match on test chro 2...
-        GROUP0_CHR1_EXPECTED_BUCKET_CONTENT = {
-                1: [2,3,4,8,9],
-                2: [1],
+        GROUP0_EXPECTED_BUCKET_CONTENT = {
+                1: [2,8,9],
+                2: [1,3,4],
                 3: [0],
                 5: [26],
                 10: [27]
         }
         for bucket, content in self.g.group_buckets["test0"].items():
-            self.assertEquals(sorted(GROUP0_CHR1_EXPECTED_BUCKET_CONTENT[bucket]),
+            self.assertEquals(sorted(GROUP0_EXPECTED_BUCKET_CONTENT[bucket]),
                     sorted(content))
 
     def test_content_group_counter(self):
         # There should be an entry for every non-zero region...
         GROUP0_EXPECTED_COUNTER_CONTENT = [
-            3,2,1,1,1,1,1,  # Chr1
+            3,2,1,2,2,1,1,  # Chr1
             5,10            # Chr2
         ]
 
@@ -273,11 +273,24 @@ class TestGoldilocks(unittest.TestCase):
         self.assertEquals(len(GROUP0_EXPECTED_COUNTER_CONTENT), g0_number_non_empty)
         self.assertEquals(sorted(GROUP0_EXPECTED_COUNTER_CONTENT), sorted(g0_counts))
 
-    #TODO
     def test_initial_filter(self):
-        pass
+        # By default candidates should be in the "middle 25%" of the variant distribution.
+        # In this case the (37.5%, 62.5%) quantiles are equal to the median of 2.0
+        # Candidates should therefore be all regions where two variants were found.
+        candidates = self.g.initial_filter("test0")
+        self.assertEquals([1,3,4], sorted(candidates))
 
-    #TODO
+    def test_initial_filter_middle50(self):
+        # As a sanity check, given the default above has equal upper and lower
+        # limits, check for candidates in the "middle 50% of the distriubtion.
+        # In this case the (25.0%, 75.0%) quantiles are (1.0, 3.0).
+        # Candidates should therefore be all regions where between one and
+        # three variants were found (inclusive).
+        candidates = self.g.initial_filter("test0", window=50)
+        self.assertEquals(sorted([2,8,9,1,3,4,0]), sorted(candidates))
+
+    #TODO Although not entirely necessary as this is done manually by reading
+    #     the script output anyway...
     def test_enrichment(self):
         pass
 
