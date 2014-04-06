@@ -3,7 +3,7 @@ from math import floor, ceil
 
 class Goldilocks(object):
 
-    def __init__(self, paths_file):
+    def __init__(self, paths_file, length=1000000, stride=500000, med_window=12.5):
         self.files = {}         # Files to read variants from (path and group)
 
         self.chr_max_len = {}   # Map chromosomes to the largest variant position
@@ -26,9 +26,9 @@ class Goldilocks(object):
 
         self.paths_filename = paths_file
 
-        self.LENGTH = 1000000
-        self.STRIDE = 500000 # NOTE STRIDE must be non-zero, 1 is a bad idea (TM)
-        self.MED_WINDOW = 12.5 # Middle 25%
+        self.LENGTH = length
+        self.STRIDE = stride # NOTE STRIDE must be non-zero, 1 is a bad idea (TM)
+        self.MED_WINDOW = med_window # Middle 25%
         self.GRAPHING = False
 
         self.load_variant_files(self.paths_filename)
@@ -117,6 +117,7 @@ class Goldilocks(object):
                     num_variants = np.sum(chros[group][region_s:region_e+1])
                     regions[region_i]["group_counts"][group] = num_variants
 
+                    # TODO Should we be ignoring these regions?
                     # Record this region (if it contained variants in this group)
                     if num_variants > 0:
                         if num_variants not in self.group_buckets[group]:
