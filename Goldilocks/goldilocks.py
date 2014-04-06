@@ -107,6 +107,7 @@ class Goldilocks(object):
             for i, region_s in enumerate(range(1, size+1-self.LENGTH+1, self.STRIDE)):
                 region_e = region_s + self.LENGTH - 1
                 regions[region_i] = {
+                    "ichr": i,
                     "group_counts": {},
                     "chr": chrno,
                     "pos_start": region_s,
