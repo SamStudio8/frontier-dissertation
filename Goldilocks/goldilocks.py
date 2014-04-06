@@ -140,7 +140,7 @@ class Goldilocks(object):
                 region_i += 1
         return regions
 
-    # TODO Hard coded GWAS group
+    # TODO[Future] Hard coded GWAS group
     def initial_filter(self, group="gwas"):
         candidates = []
 
@@ -148,16 +148,18 @@ class Goldilocks(object):
         q_low  = np.percentile(np.asarray(self.group_counts[group]), 50 - self.MED_WINDOW)
         q_high = np.percentile(np.asarray(self.group_counts[group]), 50 + self.MED_WINDOW)
 
-        # For each "number of variants" bucket, mapping the number of variants
+        # For each "number of variants" bucket: which map the number of variants
         # seen in a region, to all regions that contained that number of variants
         for bucket in self.group_buckets[group]:
             if bucket > floor(q_low) and bucket < ceil(q_high):
+                # Append all region data structures within the desired range
+                # to the list of candidates for enrichment
                 candidates += self.group_buckets[group][bucket]
         return candidates
 
-    # TODO Hard coded iCHIP group
+    # TODO[Future] Hard coded iCHIP group
     def enrich(self, filter_group="gwas", enrich_group="ichip"):
-
+        # Enrich selection by choosing a region with median GWAS and maximum iCHIP
         print "WND\tGWAS\tiCHIP\tCHR\tPOSITIONS"
         q_median = np.percentile(np.asarray(self.group_counts[filter_group]), 50)
         for region in sorted(self.regions, key=lambda x: abs(self.regions[x]["group_counts"][filter_group] - q_median)):
