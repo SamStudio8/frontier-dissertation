@@ -10,9 +10,11 @@ class TestBamcheckReader(unittest.TestCase):
     def test_tidy_key(self):
         # Test stripping of end colon, spaces and dots
         self.assertEqual("hoot", bcr.tidy_key("hoot:"))
+        self.assertEqual("ho-ot", bcr.tidy_key("ho_ot:"))
         self.assertEqual("hoot-hoot", bcr.tidy_key("hoot hoot:"))
         self.assertEqual("hoot-hoot", bcr.tidy_key("hoot.hoot:"))
         self.assertEqual("hoot-hoot-hoot", bcr.tidy_key("hoot hoot.hoot:"))
+        self.assertEqual("hoot-hoot-hoot-hoot", bcr.tidy_key("hoot_hoot hoot.hoot:"))
 
     def test_size_summary(self):
         # Summary dict should be the same size as number of SN lines

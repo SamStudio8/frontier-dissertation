@@ -8,6 +8,7 @@ __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 def tidy_key(key):
     key = key[:-1].replace(" ", "-")
     key = key.replace(".", "-")
+    key = key.replace("_", "-")
     return key.strip()
 
 class BamcheckReader(object):
@@ -16,6 +17,7 @@ class BamcheckReader(object):
     def __init__(self, filepath, auto_close=False):
         """Constructs the read only file handler and parses the header"""
         self.summary = SummaryNumbers()
+        self.indel = IndelDistribution()
 
         self.handler = open(filepath, 'r')
         self.handler.seek(0)
@@ -49,6 +51,11 @@ class BamcheckReader(object):
                     continue
                 self.summary[name] = value
 
+            elif fields[0] == "ID":
+                self.indel.lengths.append(int(fields[1]))
+                self.indel.inserts.append(int(fields[2]))
+                self.indel.deletes.append(int(fields[3]))
+
     def close(self):
         """Close the file handler"""
         self.handler.close()
@@ -69,3 +76,15 @@ class SummaryNumbers(dict):
                 matches.append(key)
         return matches
 
+class IndelDistribution(object):
+
+    def __init__(self):
+        self.lengths = []
+        self.inserts = []
+        self.deletes = []
+
+    def total_inserts(self):
+        return sum(self.inserts)
+
+    def total_deletes(self):
+        return sum(self.deletes)
