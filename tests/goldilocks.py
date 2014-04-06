@@ -11,7 +11,7 @@ NUM_TEST_CHRO = 2
 
 LARGEST_POS = {
         1: 50,
-        2: 100,
+        2: 101,
 }
 
 # TODO Could randomly generate these files with random positions and
@@ -20,14 +20,26 @@ TEST_DATA = {
     "group0_1": {
         1: [
             [1, 'G', 'A'],
+            [4, 'G', 'A'],
             [LARGEST_POS[1], 'G', 'A'],
         ],
         2: [
+            [91, 'G', 'A'],
+            [92, 'G', 'A'],
+            [93, 'G', 'A'],
+            [94, 'G', 'A'],
+            [95, 'G', 'A'],
+            [96, 'G', 'A'],
+            [97, 'G', 'A'],
+            [98, 'G', 'A'],
+            [99, 'G', 'A'],
+            [100, 'G', 'A'],
         ],
     },
     "group0_2": {
         1: [
             [10, 'G', 'A'],
+            [13, 'G', 'A'],
             [25, 'G', 'A'],
         ],
         2: [
@@ -163,18 +175,30 @@ class TestGoldilocks(unittest.TestCase):
 # NOTE Following tests are hard coded to avoid having to write a test suite    #
 #      for the tests themselves, this does need some work but will do for now  #
 ################################################################################
+# GROUP0
 # CHR 1                                                            Expected
-#               6   10    16       25                                Size
-#       1 |*========*==============*========================*| 50
-#          |        |                                                 2
-#               |        |                                            1
-#                    |        |                                       0
-#                         |        |                                  1
-#                              |        |                             1
-#                                   |        |                        0
-#                                        |        |                   0
-#                                             |        |              0
-#                                                  |        |         1
+#             4     10 13          25                                Size    i
+#       1 |*==*=====*==*===========*========================*| 50
+#          |        |                                                 3      0
+#               |        |                                            2      1
+#                    |        |                                       1      2
+#                         |        |                                  1      3
+#                              |        |                             1      4
+#                                   |        |                        0      5
+#                                        |        |                   0      6
+#                                             |        |              0      7
+#                                                  |        |         1      8
+#                                                       |        |    x
+#
+# GROUP0
+# CHR 2                                                            Expected
+#              5                                   91                Size    i
+#       1 |====*=================\/...\/===========**********| 100
+#          |        |                                                 1      9
+#               |        |                                            0      10
+#                                  ...                                .      .
+#                                             |        |              5      26
+#                                                  |        |         10     27
 #                                                       |        |    x
 #
 ################################################################################
@@ -191,32 +215,63 @@ class TestGoldilocks(unittest.TestCase):
         #                                   -1 allows including of last region
         self.assertEquals(len(range(1, (self.g.chr_max_len[1]+1) - (LENGTH-1), STRIDE)), chr_counts[1])
 
-    # TODO Hard coded for now as otherwise we'll end up needing to test the tests...
     def test_content_group_regions(self):
         GROUP0_CHR1_EXPECTED_CONTENT = {
+                0: 3,
                 1: 2,
-                6: 1,
-                11: 0,
-                16: 1,
-                21: 1,
-                26: 0,
-                31: 0,
-                36: 0,
-                41: 1
+                2: 1,
+                3: 1,
+                4: 1,
+                5: 0,
+                6: 0,
+                7: 0,
+                8: 1
         }
         for region_i, region_data in self.g.regions.items():
             if region_data["chr"] == 1:
-                self.assertEquals(GROUP0_CHR1_EXPECTED_CONTENT[region_data["pos_start"]],
+                self.assertEquals(GROUP0_CHR1_EXPECTED_CONTENT[region_i],
                         region_data["group_counts"]["test0"])
 
 
-    #TODO
-    def test_content_group_bucket(self):
-        pass
+    def test_number_group_buckets(self):
+        GROUP0_EXPECTED_BUCKETS = [
+                1,2,3,5,10
+        ]
+        self.assertEquals(len(GROUP0_EXPECTED_BUCKETS),
+                len(self.g.group_buckets["test0"]))
 
-    #TODO
+        for i, bucket in enumerate(sorted(self.g.group_buckets["test0"])):
+            self.assertEquals(GROUP0_EXPECTED_BUCKETS[i], bucket)
+
+    def test_content_group_buckets(self):
+        # NOTE region_i == 9 is from a match on test chro 2...
+        GROUP0_CHR1_EXPECTED_BUCKET_CONTENT = {
+                1: [2,3,4,8,9],
+                2: [1],
+                3: [0],
+                5: [26],
+                10: [27]
+        }
+        for bucket, content in self.g.group_buckets["test0"].items():
+            self.assertEquals(sorted(GROUP0_CHR1_EXPECTED_BUCKET_CONTENT[bucket]),
+                    sorted(content))
+
     def test_content_group_counter(self):
-        pass
+        # There should be an entry for every non-zero region...
+        GROUP0_EXPECTED_COUNTER_CONTENT = [
+            3,2,1,1,1,1,1,  # Chr1
+            5,10            # Chr2
+        ]
+
+        g0_number_non_empty = 0
+        g0_counts = []
+        for region_i, region_data in self.g.regions.items():
+            if region_data["group_counts"]["test0"] > 0:
+                g0_counts.append(region_data["group_counts"]["test0"])
+                g0_number_non_empty += 1
+
+        self.assertEquals(len(GROUP0_EXPECTED_COUNTER_CONTENT), g0_number_non_empty)
+        self.assertEquals(sorted(GROUP0_EXPECTED_COUNTER_CONTENT), sorted(g0_counts))
 
     #TODO
     def test_initial_filter(self):
