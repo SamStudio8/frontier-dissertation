@@ -61,7 +61,7 @@ class Goldilocks(object):
 
             chrno, pos = fields[0].split(":")
             chrno = int(chrno) # NOTE Explodes for allosomes
-            pos = int(pos) + 1 # NOTE Positions are 1-indexed
+            pos = int(pos)     # NOTE Positions are 1-indexed
 
             # Check group exists
             if group not in self.groups:
@@ -103,7 +103,8 @@ class Goldilocks(object):
                 chros[group] = self.load_chromosome(size, self.groups[group][chrno])
 
             print "[SRCH] Chr:%d" % (chrno)
-            for i, region_s in enumerate(range(1, size+1-self.LENGTH, self.STRIDE)):
+            # Ignore 0 position
+            for i, region_s in enumerate(range(1, size+1-self.LENGTH+1, self.STRIDE)):
                 region_e = region_s + self.LENGTH - 1
                 regions[region_i] = {
                     "group_counts": {},
