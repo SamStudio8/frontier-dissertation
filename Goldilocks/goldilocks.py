@@ -28,7 +28,7 @@ class Goldilocks(object):
 
         self.LENGTH = length
         self.STRIDE = stride # NOTE STRIDE must be non-zero, 1 is a bad idea (TM)
-        self.MED_WINDOW = med_window # Middle 25%
+        self.MED_WINDOW = med_window # Middle 25%, can also be overriden later
         self.GRAPHING = False
 
         self.load_variant_files(self.paths_filename)
@@ -141,12 +141,17 @@ class Goldilocks(object):
         return regions
 
     # TODO[Future] Hard coded GWAS group
-    def initial_filter(self, group="gwas"):
+    def initial_filter(self, group="gwas", window=None):
+        if window is None:
+            window = self.MED_WINDOW
+        else:
+            window = float(window)/2
+
         candidates = []
 
         # Select middle 25% of GWAS group
-        q_low  = np.percentile(np.asarray(self.group_counts[group]), 50 - self.MED_WINDOW)
-        q_high = np.percentile(np.asarray(self.group_counts[group]), 50 + self.MED_WINDOW)
+        q_low  = np.percentile(np.asarray(self.group_counts[group]), 50 - window)
+        q_high = np.percentile(np.asarray(self.group_counts[group]), 50 + window)
 
         # For each "number of variants" bucket: which map the number of variants
         # seen in a region, to all regions that contained that number of variants
