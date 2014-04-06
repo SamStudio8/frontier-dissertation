@@ -3,7 +3,7 @@ from math import floor, ceil
 
 class Goldilocks(object):
 
-    def __init__(self):
+    def __init__(self, paths_file):
         self.files = {}         # Files to read variants from (path and group)
 
         self.chr_max_len = {}   # Map chromosomes to the largest variant position
@@ -24,14 +24,18 @@ class Goldilocks(object):
         self.candidates = []    # Lists regions that meet the criteria for final
                                 # enrichment and processing
 
+        self.paths_filename = paths_file
+
         self.LENGTH = 1000000
         self.STRIDE = 500000 # NOTE STRIDE must be non-zero, 1 is a bad idea (TM)
         self.MED_WINDOW = 12.5 # Middle 25%
         self.GRAPHING = False
 
+        self.load_variant_files(self.paths_filename)
 
-    def load_variant_files(self, paths="paths.g"):
-        path_list = open(paths)
+
+    def load_variant_files(self, paths_filename):
+        path_list = open(paths_filename)
         files = {}
         current_group = None
         for line in path_list:
@@ -165,7 +169,6 @@ class Goldilocks(object):
                     )
 
     def execute(self):
-        self.load_variant_files()
         for i, f in enumerate(self.files):
             print "[READ] %s [%d of %d]" % (self.files[f]["path"], i+1, len(self.files))
             self.load_variants_from_file(self.files[f]["path"], self.files[f]["group"])
@@ -175,4 +178,4 @@ class Goldilocks(object):
         self.candidates = self.enrich()
 
 if __name__ == "__main__":
-    Goldilocks().execute()
+    Goldilocks("paths.g").execute()
