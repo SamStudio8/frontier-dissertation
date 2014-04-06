@@ -151,7 +151,7 @@ class Goldilocks(object):
         # For each "number of variants" bucket: which map the number of variants
         # seen in a region, to all regions that contained that number of variants
         for bucket in self.group_buckets[group]:
-            if bucket > floor(q_low) and bucket < ceil(q_high):
+            if bucket >= floor(q_low) and bucket <= ceil(q_high):
                 # Append all region data structures within the desired range
                 # to the list of candidates for enrichment
                 candidates += self.group_buckets[group][bucket]
