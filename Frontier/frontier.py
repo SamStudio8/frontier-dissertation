@@ -38,7 +38,7 @@ def count_class(classes, class_label):
 
 class Statplexer(object):
 
-    def __init__(self, data_dir, target_path, classes, READER_CLASS):
+    def __init__(self, data_dir, target_path, classes, DATA_READER_CLASS, TARGET_READER_CLASS):
         self.data_dir = data_dir
         self.target_path = target_path
 
@@ -51,20 +51,9 @@ class Statplexer(object):
         for cl in self._classes:
             self._classes[cl]["count"] = 0
 
-        t = open(target_path, 'r')
-        t.readline()
-        targets = {}
-        for line in t:
-            line = line.strip()
-            fields = line.split("\t")
-            _id = fields[0]
-
-            _class = classify_label(classes, fields[4])
-            _code = encode_class(classes, _class)
-
-            targets[_id] = _code
-
         #TODO Better handling for missing targets
+        targets = TARGET_READER_CLASS(target_path, classes, auto_close=True).get_targets()
+
         for root, subfolders, files in os.walk(self.data_dir):
             print root + "(" + str(len(files)) + " files)"
             for f in files:
@@ -73,7 +62,7 @@ class Statplexer(object):
                 _id = f.split(".")[0]
                 if _id in targets:
                     self._targets[_id] = targets[_id]
-                    self._data[f] = READER_CLASS(fpath, auto_close=True)
+                    self._data[f] = DATA_READER_CLASS(fpath, classes, auto_close=True)
                     self._len += 1
 
                     class_label = decode_class(classes, targets[_id])

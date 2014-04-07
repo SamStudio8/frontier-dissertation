@@ -16,6 +16,7 @@ from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
 from Frontier import frontier
 from Frontier.IO.BamcheckReader import BamcheckReader
+from Frontier.IO.AQCReader import AQCReader
 
 CLASSES = {
         "pass": {
@@ -179,7 +180,8 @@ class QC:
             self.data_dir,
             self.target_path,
             CLASSES,
-            BamcheckReader)
+            BamcheckReader,
+            AQCReader)
 
         # Process parameter_set
         if self.parameter_set == "ALL":

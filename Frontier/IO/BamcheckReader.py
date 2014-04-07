@@ -14,7 +14,7 @@ def tidy_key(key):
 class BamcheckReader(object):
     """Wraps a file handler and provides access to stats contents"""
 
-    def __init__(self, filepath, auto_close=False):
+    def __init__(self, filepath, CLASSES, auto_close=False):
         """Constructs the read only file handler and parses the header"""
         self.summary = SummaryNumbers()
         self.indel = IndelDistribution()
