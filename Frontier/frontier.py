@@ -111,7 +111,7 @@ class Statplexer(object):
             regressors.remove(key)
         return sorted(regressors)
 
-    def get_regressors(self, names):
+    def get_data_by_regressors(self, names):
         np_array = np.empty([len(self),len(names)])
         for i, observation in enumerate(sorted(self._data)):
             observation_n = np.zeros(len(names))
