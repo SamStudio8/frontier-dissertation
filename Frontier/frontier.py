@@ -7,8 +7,6 @@ import numpy as np
 import os
 import sys
 
-from IO.bamcheckreader import BamcheckReader
-
 def classify_label(classes, label):
     for cl in classes:
         for name in classes[cl]["names"]:
