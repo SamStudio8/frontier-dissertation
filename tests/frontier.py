@@ -68,5 +68,29 @@ class TestFrontier(unittest.TestCase):
     def test_count_unknown_class(self):
         self.assertRaises(Exception, f.count_class, CLASSES, "hoot")
 
+
+    def test_list_regressors(self):
+        pass
+
+    def test_find_regressors(self):
+        pass
+
+    def test_exclude_regressors(self):
+        pass
+
+    def test_get_regressors(self):
+        pass
+
+    def test_get_data_by_target(self):
+        pass
+
+    def test_get_targets(self):
+        pass
+
+    def test_count_targets_by_class(self):
+        pass
+
+
+
 if __name__ == '__main__':
     unittest.main()
