@@ -44,7 +44,6 @@ class Statplexer(object):
 
         self._data = {}
         self._targets = {}
-        self._len = 0
 
         self._classes = classes
         for cl in self._classes:
@@ -66,7 +65,6 @@ class Statplexer(object):
                     if _id in targets:
                         self._targets[_id] = targets[_id]
                         self._data[f] = DATA_READER_CLASS(fpath, classes, auto_close=True).get_data()
-                        self._len += 1
 
                         class_label = decode_class(classes, targets[_id])
                         count_class(classes, class_label)
@@ -74,7 +72,7 @@ class Statplexer(object):
                         print "[WARN] INPUT missing TARGET"
 
     def __len__(self):
-        return self._len
+        return len(self._data)
 
     def list_regressors(self):
         regressors = []
