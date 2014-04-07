@@ -60,6 +60,9 @@ class BamcheckReader(object):
         """Close the file handler"""
         self.handler.close()
 
+    def get_data(self):
+        return self.summary
+
     def __iter__(self):
         self.handler.seek(0) # Reset the file pointer
         return self.handler

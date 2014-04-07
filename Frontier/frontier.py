@@ -65,7 +65,7 @@ class Statplexer(object):
                     _id = f.split(".")[0]
                     if _id in targets:
                         self._targets[_id] = targets[_id]
-                        self._data[f] = DATA_READER_CLASS(fpath, classes, auto_close=True)
+                        self._data[f] = DATA_READER_CLASS(fpath, classes, auto_close=True).get_data()
                         self._len += 1
 
                         class_label = decode_class(classes, targets[_id])
@@ -79,7 +79,7 @@ class Statplexer(object):
     def list_regressors(self):
         regressors = []
         for observation in sorted(self._data):
-            for r in self._data[observation].summary:
+            for r in self._data[observation]:
                 if r not in regressors:
                     regressors.append(r)
             break
@@ -88,7 +88,7 @@ class Statplexer(object):
     def find_regressors(self, queries):
         regressors = []
         for observation in sorted(self._data):
-            for r in self._data[observation].summary:
+            for r in self._data[observation]:
                 for query in queries:
                     if query in r:
                         if r not in regressors:
@@ -114,7 +114,7 @@ class Statplexer(object):
         for i, observation in enumerate(sorted(self._data)):
             observation_n = np.zeros(len(names))
             for j, regressor in enumerate(names):
-                observation_n[j] = self._data[observation].summary[regressor]
+                observation_n[j] = self._data[observation][regressor]
             np_array[i] = observation_n
         return np_array
 
@@ -143,7 +143,7 @@ class Statplexer(object):
 
             observation_n = np.zeros(len(names))
             for j, regressor in enumerate(names):
-                observation_n[j] = self._data[observation].summary[regressor]
+                observation_n[j] = self._data[observation][regressor]
             data_np_array[counter] = observation_n
             targ_np_array[counter] = self._targets[_id]
             if self._targets[_id] not in levels:
