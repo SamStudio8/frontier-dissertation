@@ -99,14 +99,18 @@ class Statplexer(object):
 
     def exclude_regressors(self, queries, exact=False):
         regressors = self.list_regressors()
+        to_remove = []
         for query in queries:
             for i, r in enumerate(regressors):
                 if exact:
                     if query.lower() == r.lower():
-                        regressors.pop(i)
+                        to_remove.append(r)
                 else:
                     if query.lower() in r.lower():
-                        regressors.pop(i)
+                        to_remove.append(r)
+
+        for key in to_remove:
+            regressors.remove(key)
         return sorted(regressors)
 
     def get_regressors(self, names):
