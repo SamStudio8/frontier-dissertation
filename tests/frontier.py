@@ -19,7 +19,7 @@ CLASSES = {
         },
 }
 
-class TestFrontier(unittest.TestCase):
+class TestFrontierUtils(unittest.TestCase):
 
     def test_classify_label(self):
         for class_name in CLASSES:
@@ -69,8 +69,31 @@ class TestFrontier(unittest.TestCase):
         self.assertRaises(Exception, f.count_class, CLASSES, "hoot")
 
 
+TEST_PARAMETERS = [
+    "hoothoot"
+]
+
+class TestFrontier(unittest.TestCase):
+
+    @classmethod
+    def setUpClass(cls):
+        # Initialising the Statplexer in this way seems both terrible and trivial,
+        # but the individual readers are seperately tested so it seems unnecessary
+        # to test the data and targets are correctly read in.
+        cls.plex = f.Statplexer(None, None, CLASSES, None, None)
+        for i in range(0, 11):
+            sample_name = "Frontier%d" % i
+            cls.plex._data[sample_name] = {}
+            for tp in TEST_PARAMETERS:
+                cls.plex._data[sample_name][tp] = 1
+            cls.plex._targets[sample_name] = 1
+
     def test_list_regressors(self):
-        pass
+        parameters = self.plex.list_regressors()
+        self.assertEquals(len(TEST_PARAMETERS), len(parameters))
+
+        for p in parameters:
+            self.assertIn(p, TEST_PARAMETERS)
 
     def test_find_regressors(self):
         pass
