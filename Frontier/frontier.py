@@ -42,7 +42,6 @@ class Statplexer(object):
         self.data_dir = data_dir
         self.target_path = target_path
 
-        self.listing = []
         self._data = {}
         self._targets = {}
         self._len = 0
@@ -51,28 +50,28 @@ class Statplexer(object):
         for cl in self._classes:
             self._classes[cl]["count"] = 0
 
-        #TODO Better handling for missing targets
-        # targets written to local variable rather than self._targets class variable
-        # to ensure only targets for observations actually seen in the input data are
-        # added to the data structure
-        targets = TARGET_READER_CLASS(target_path, classes, auto_close=True).get_targets()
+        if data_dir and target_path:
+            #TODO Better handling for missing targets
+            # targets written to local variable rather than self._targets class
+            # variable to ensure only targets for observations actually seen in
+            # the input data are added to the data structure
+            targets = TARGET_READER_CLASS(target_path, classes, auto_close=True).get_targets()
 
-        for root, subfolders, files in os.walk(self.data_dir):
-            print root + "(" + str(len(files)) + " files)"
-            for f in files:
-                fpath = os.path.join(root, f)
+            for root, subfolders, files in os.walk(self.data_dir):
+                print root + "(" + str(len(files)) + " files)"
+                for f in files:
+                    fpath = os.path.join(root, f)
 
-                _id = f.split(".")[0]
-                if _id in targets:
-                    self._targets[_id] = targets[_id]
-                    self._data[f] = DATA_READER_CLASS(fpath, classes, auto_close=True)
-                    self._len += 1
+                    _id = f.split(".")[0]
+                    if _id in targets:
+                        self._targets[_id] = targets[_id]
+                        self._data[f] = DATA_READER_CLASS(fpath, classes, auto_close=True)
+                        self._len += 1
 
-                    class_label = decode_class(classes, targets[_id])
-                    count_class(classes, class_label)
-                else:
-                    print "[WARN] INPUT missing TARGET"
-
+                        class_label = decode_class(classes, targets[_id])
+                        count_class(classes, class_label)
+                    else:
+                        print "[WARN] INPUT missing TARGET"
 
     def __len__(self):
         return self._len
