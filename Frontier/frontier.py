@@ -52,6 +52,9 @@ class Statplexer(object):
             self._classes[cl]["count"] = 0
 
         #TODO Better handling for missing targets
+        # targets written to local variable rather than self._targets class variable
+        # to ensure only targets for observations actually seen in the input data are
+        # added to the data structure
         targets = TARGET_READER_CLASS(target_path, classes, auto_close=True).get_targets()
 
         for root, subfolders, files in os.walk(self.data_dir):
