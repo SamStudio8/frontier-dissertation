@@ -55,7 +55,7 @@ class TestBamcheckReader(unittest.TestCase):
                 fields = line.split("\t")
                 key = bcr.tidy_key(fields[1])
                 value = fields[2]
-                self.assertEquals(bamcheck.summary[key], float(value))
+                self.assertEqual(bamcheck.summary[key], float(value))
 
         # Some hard-coded tests to ensure coverage
         HARDCODE_TEST_VALUES = {
@@ -71,7 +71,7 @@ class TestBamcheckReader(unittest.TestCase):
                 "T-percent-total-mean-baseline-deviation": 0.1736
         }
         for key, value in HARDCODE_TEST_VALUES.items():
-            self.assertEquals(bamcheck.summary[key], value)
+            self.assertEqual(bamcheck.summary[key], value)
 
 if __name__ == '__main__':
     unittest.main()

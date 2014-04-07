@@ -24,14 +24,14 @@ class TestFrontierUtils(unittest.TestCase):
     def test_classify_label(self):
         for class_name in CLASSES:
             for name in CLASSES[class_name]["names"]:
-                self.assertEquals(class_name, f.classify_label(CLASSES, name))
+                self.assertEqual(class_name, f.classify_label(CLASSES, name))
 
     def test_classify_unknown_label(self):
         self.assertRaises(Exception, f.classify_label, CLASSES, "hoot")
 
     def test_encode_class(self):
         for class_name in CLASSES:
-            self.assertEquals(CLASSES[class_name]["code"], f.encode_class(CLASSES, class_name))
+            self.assertEqual(CLASSES[class_name]["code"], f.encode_class(CLASSES, class_name))
 
     def test_encode_unknown_class(self):
         self.assertRaises(Exception, f.encode_class, CLASSES, "hoot")
@@ -63,7 +63,7 @@ class TestFrontierUtils(unittest.TestCase):
         for class_name in COUNT_LIST:
             f.count_class(CLASSES_COPY, class_name)
         for class_name in CLASSES_COPY:
-            self.assertEquals(EXPECT_COUNT[class_name], CLASSES_COPY[class_name]["count"])
+            self.assertEqual(EXPECT_COUNT[class_name], CLASSES_COPY[class_name]["count"])
 
     def test_count_unknown_class(self):
         self.assertRaises(Exception, f.count_class, CLASSES, "hoot")
@@ -90,7 +90,7 @@ class TestFrontier(unittest.TestCase):
 
     def test_list_regressors(self):
         parameters = self.plex.list_regressors()
-        self.assertEquals(len(TEST_PARAMETERS), len(parameters))
+        self.assertEqual(len(TEST_PARAMETERS), len(parameters))
 
         for p in parameters:
             self.assertIn(p, TEST_PARAMETERS)

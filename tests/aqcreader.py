@@ -162,7 +162,7 @@ class TestAQCReader(unittest.TestCase):
         targets = aqc.get_targets()
 
         for t in targets:
-            self.assertEquals(TEST_DATA[t]["aqc"], targets[t])
+            self.assertEqual(TEST_DATA[t]["aqc"], targets[t])
         aqc.close()
 
     # Probably somewhat arbitrary also...
@@ -170,8 +170,8 @@ class TestAQCReader(unittest.TestCase):
         aqc = aqcr.AQCReader(DATA_UNIQ_PATH)
         targets = aqc.get_targets()
 
-        self.assertEquals(TEST_UNIQ_DATA["9998_9#4"]["aqc"], targets["9998_9#4"])
-        self.assertEquals(TEST_UNIQ_DATA["9998_9#6"]["aqc"], targets["9998_9#6"])
+        self.assertEqual(TEST_UNIQ_DATA["9998_9#4"]["aqc"], targets["9998_9#4"])
+        self.assertEqual(TEST_UNIQ_DATA["9998_9#6"]["aqc"], targets["9998_9#6"])
 
     # Quick test for integration with Frontier label utils
     def test_coded_line_content(self):
@@ -181,7 +181,7 @@ class TestAQCReader(unittest.TestCase):
         for t in targets:
             expected_class = classify_label(EXAMPLE_CLASSES, TEST_DATA[t]["aqc"])
             expected_code = encode_class(EXAMPLE_CLASSES, expected_class)
-            self.assertEquals(expected_code, targets[t])
+            self.assertEqual(expected_code, targets[t])
         aqc.close()
 
 if __name__ == '__main__':

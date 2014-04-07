@@ -109,25 +109,25 @@ class TestGoldilocks(unittest.TestCase):
                 num_files += 1
         paths_file.close()
 
-        self.assertEquals(num_files, len(self.g.files))
-        self.assertEquals(num_groups, len(self.g.groups))
+        self.assertEqual(num_files, len(self.g.files))
+        self.assertEqual(num_groups, len(self.g.groups))
 
     def test_files_grouped(self):
         for fname, fobj in self.g.files.items():
             # Expected group is group number prefixed by "test" (for testing)
             expected_group = "test" + fname[5]
-            self.assertEquals(expected_group, fobj["group"])
+            self.assertEqual(expected_group, fobj["group"])
 
     def test_largest_variant_position(self):
         for i in range(1, NUM_TEST_CHRO+1):
-            self.assertEquals(LARGEST_POS[i], self.g.chr_max_len[i])
+            self.assertEqual(LARGEST_POS[i], self.g.chr_max_len[i])
 
     def test_number_seen_variants(self):
         # Check whether the total number of seen variants across all files in a
         # group (including duplicates) have been seen
         for grp in self.g.groups:
             for i in range(1, NUM_TEST_CHRO+1):
-                self.assertEquals(len(self.groups[grp][i]), len(self.g.groups[grp][i]))
+                self.assertEqual(len(self.groups[grp][i]), len(self.g.groups[grp][i]))
 
     def test_size_loaded_chro(self):
         # Technically don't need to iterate the groups here as the size is
@@ -135,7 +135,7 @@ class TestGoldilocks(unittest.TestCase):
         for grp in self.g.groups:
             for i in range(1, NUM_TEST_CHRO+1):
                 # Length should be LARGEST_POS + 1 to account for the unused 0 index
-                self.assertEquals(LARGEST_POS[i]+1,
+                self.assertEqual(LARGEST_POS[i]+1,
                         len(self.g.load_chromosome(self.g.chr_max_len[i], self.g.groups[grp][i])))
 
     def test_number_loaded_variants(self):
@@ -143,7 +143,7 @@ class TestGoldilocks(unittest.TestCase):
         # numpy array (excluding duplicates)
         for grp in self.g.groups:
             for i in range(1, NUM_TEST_CHRO+1):
-                self.assertEquals(len(self.groups[grp][i]) - self.dups[grp][i],
+                self.assertEqual(len(self.groups[grp][i]) - self.dups[grp][i],
                         sum(self.g.load_chromosome(self.g.chr_max_len[i], self.g.groups[grp][i])))
 
     def test_location_loaded_variants(self):
@@ -152,23 +152,23 @@ class TestGoldilocks(unittest.TestCase):
         for grp in self.g.groups:
             for i in range(1, NUM_TEST_CHRO+1):
                 for pos in self.groups[grp][i]:
-                    self.assertEquals(1,
+                    self.assertEqual(1,
                             self.g.load_chromosome(self.g.chr_max_len[i], self.g.groups[grp][i])[pos])
 
     def test_region_lengths(self):
         # Ensure ALL meet LENGTH
         for region_i, region_data in self.g.regions.items():
-            self.assertEquals(LENGTH, len(range(region_data["pos_start"], region_data["pos_end"])) + 1)
+            self.assertEqual(LENGTH, len(range(region_data["pos_start"], region_data["pos_end"])) + 1)
 
     def test_region_stride(self):
         # Ensure regions begin at right STRIDE
         for region_i, region_data in self.g.regions.items():
             expected_start = 1 + (region_data["ichr"] * STRIDE)
-            self.assertEquals(expected_start, region_data["pos_start"])
+            self.assertEqual(expected_start, region_data["pos_start"])
 
             # -1 as the region includes the start element
             expected_end = (expected_start - 1) + LENGTH
-            self.assertEquals(expected_end, region_data["pos_end"])
+            self.assertEqual(expected_end, region_data["pos_end"])
 
 
 
@@ -214,7 +214,7 @@ class TestGoldilocks(unittest.TestCase):
         # (ChroLength + 1) - (RegionLength - 1)
         #             +1 accounts for ignoring 0th element
         #                                   -1 allows including of last region
-        self.assertEquals(len(range(1, (self.g.chr_max_len[1]+1) - (LENGTH-1), STRIDE)), chr_counts[1])
+        self.assertEqual(len(range(1, (self.g.chr_max_len[1]+1) - (LENGTH-1), STRIDE)), chr_counts[1])
 
     def test_content_group_regions(self):
         GROUP0_CHR1_EXPECTED_CONTENT = {
@@ -230,7 +230,7 @@ class TestGoldilocks(unittest.TestCase):
         }
         for region_i, region_data in self.g.regions.items():
             if region_data["chr"] == 1:
-                self.assertEquals(GROUP0_CHR1_EXPECTED_CONTENT[region_i],
+                self.assertEqual(GROUP0_CHR1_EXPECTED_CONTENT[region_i],
                         region_data["group_counts"]["test0"])
 
 
@@ -238,11 +238,11 @@ class TestGoldilocks(unittest.TestCase):
         GROUP0_EXPECTED_BUCKETS = [
                 1,2,3,5,10
         ]
-        self.assertEquals(len(GROUP0_EXPECTED_BUCKETS),
+        self.assertEqual(len(GROUP0_EXPECTED_BUCKETS),
                 len(self.g.group_buckets["test0"]))
 
         for i, bucket in enumerate(sorted(self.g.group_buckets["test0"])):
-            self.assertEquals(GROUP0_EXPECTED_BUCKETS[i], bucket)
+            self.assertEqual(GROUP0_EXPECTED_BUCKETS[i], bucket)
 
     def test_content_group_buckets(self):
         GROUP0_EXPECTED_BUCKET_CONTENT = {
@@ -253,7 +253,7 @@ class TestGoldilocks(unittest.TestCase):
                 10: [27]
         }
         for bucket, content in self.g.group_buckets["test0"].items():
-            self.assertEquals(sorted(GROUP0_EXPECTED_BUCKET_CONTENT[bucket]),
+            self.assertEqual(sorted(GROUP0_EXPECTED_BUCKET_CONTENT[bucket]),
                     sorted(content))
 
     def test_content_group_counter(self):
@@ -270,15 +270,15 @@ class TestGoldilocks(unittest.TestCase):
                 g0_counts.append(region_data["group_counts"]["test0"])
                 g0_number_non_empty += 1
 
-        self.assertEquals(len(GROUP0_EXPECTED_COUNTER_CONTENT), g0_number_non_empty)
-        self.assertEquals(sorted(GROUP0_EXPECTED_COUNTER_CONTENT), sorted(g0_counts))
+        self.assertEqual(len(GROUP0_EXPECTED_COUNTER_CONTENT), g0_number_non_empty)
+        self.assertEqual(sorted(GROUP0_EXPECTED_COUNTER_CONTENT), sorted(g0_counts))
 
     def test_initial_filter(self):
         # By default candidates should be in the "middle 25%" of the variant distribution.
         # In this case the (37.5%, 62.5%) quantiles are equal to the median of 2.0
         # Candidates should therefore be all regions where two variants were found.
         candidates = self.g.initial_filter("test0")
-        self.assertEquals([1,3,4], sorted(candidates))
+        self.assertEqual([1,3,4], sorted(candidates))
 
     def test_initial_filter_middle50(self):
         # As a sanity check, given the default above has equal upper and lower
@@ -287,7 +287,7 @@ class TestGoldilocks(unittest.TestCase):
         # Candidates should therefore be all regions where between one and
         # three variants were found (inclusive).
         candidates = self.g.initial_filter("test0", window=50)
-        self.assertEquals(sorted([2,8,9,1,3,4,0]), sorted(candidates))
+        self.assertEqual(sorted([2,8,9,1,3,4,0]), sorted(candidates))
 
     #TODO Although not entirely necessary as this is done manually by reading
     #     the script output anyway...
