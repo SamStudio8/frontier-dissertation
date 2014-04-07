@@ -15,6 +15,7 @@ from sklearn.metrics import confusion_matrix
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
 
 from Frontier import frontier
+from Frontier.IO.BamcheckReader import BamcheckReader
 
 CLASSES = {
         "pass": {
@@ -177,7 +178,8 @@ class QC:
         self.statplexer = frontier.Statplexer(
             self.data_dir,
             self.target_path,
-            CLASSES)
+            CLASSES,
+            BamcheckReader)
 
         # Process parameter_set
         if self.parameter_set == "ALL":

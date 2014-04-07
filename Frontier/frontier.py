@@ -40,7 +40,7 @@ def count_class(classes, class_label):
 
 class Statplexer(object):
 
-    def __init__(self, data_dir, target_path, classes):
+    def __init__(self, data_dir, target_path, classes, READER_CLASS):
         self.data_dir = data_dir
         self.target_path = target_path
 
@@ -75,7 +75,7 @@ class Statplexer(object):
                 _id = f.split(".")[0]
                 if _id in targets:
                     self._targets[_id] = targets[_id]
-                    self._data[f] = BamcheckReader(fpath, auto_close=True)
+                    self._data[f] = READER_CLASS(fpath, auto_close=True)
                     self._len += 1
 
                     class_label = decode_class(classes, targets[_id])
