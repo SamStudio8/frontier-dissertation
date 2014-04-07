@@ -67,6 +67,44 @@ PARAMETER_SETS = {
         "quality-dropoff-fwd-mean-runmed-decline-low-value",
         "quality-dropoff-rev-mean-runmed-decline-low-value",
     ],
+    "AQCN": [
+        "error-rate",
+        "insert-size-average",
+        "average-quality",
+
+        "fwd-percent-insertions-above-baseline",
+        "fwd-percent-insertions-below-baseline",
+        "fwd-percent-deletions-above-baseline",
+        "fwd-percent-deletions-below-baseline",
+        "rev-percent-insertions-above-baseline",
+        "rev-percent-insertions-below-baseline",
+        "rev-percent-deletions-above-baseline",
+        "rev-percent-deletions-below-baseline",
+
+        "max-max-baseline-deviation",
+        "max-total-mean-baseline-deviation",
+        "quality-dropoff-rev-high-iqr-max-contiguous-read-cycles",
+        "quality-dropoff-fwd-high-iqr-max-contiguous-read-cycles",
+        "quality-dropoff-fwd-mean-runmed-decline-max-contiguous-read-cycles",
+        "quality-dropoff-rev-mean-runmed-decline-max-contiguous-read-cycles",
+
+        "quality-dropoff-fwd-mean-runmed-decline-high-value",
+        "quality-dropoff-rev-mean-runmed-decline-high-value",
+        "quality-dropoff-fwd-mean-runmed-decline-low-value",
+        "quality-dropoff-rev-mean-runmed-decline-low-value",
+    ],
+    "AQCN_MIN": [
+        "error-rate",
+        "fwd-percent-insertions-above-baseline",
+        #"max-total-mean-baseline-deviation",
+        #"max-max-baseline-deviation",
+    ],
+    "ERROR": [
+        "error-rate"
+    ],
+    "NO_ERROR": {
+        "exclude": ["error-rate"]
+    },
     "BASELINE": {
         "find": ["baseline"],
     },
@@ -75,6 +113,9 @@ PARAMETER_SETS = {
     },
     "MARP": {
         "find": ["mean", "percent", "rate", "average"],
+    },
+    "NO_MARP": {
+        "exclude": ["mean", "percent", "rate", "average"],
     },
 }
 
