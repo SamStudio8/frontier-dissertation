@@ -59,29 +59,29 @@ class Statplexer(object):
         for line in t:
             line = line.strip()
             fields = line.split("\t")
-            lanelet = fields[0]
+            _id = fields[0]
 
-            auto_qc_class = classify_label(classes, fields[4])
-            auto_qc_code = encode_class(classes, auto_qc_class)
+            _class = classify_label(classes, fields[4])
+            _code = encode_class(classes, _class)
 
-            targets[lanelet] = auto_qc_code
+            targets[_id] = _code
 
         #TODO Better handling for missing targets
         for root, subfolders, files in os.walk(self.data_dir):
             print root + "(" + str(len(files)) + " files)"
-            for bam in files:
-                bampath = os.path.join(root, bam)
+            for f in files:
+                fpath = os.path.join(root, f)
 
-                lanelet = bam.split(".")[0]
-                if lanelet in targets:
-                    self._targets[lanelet] = targets[lanelet]
-                    self._data[bam] = BamcheckReader(bampath, auto_close=True)
+                _id = f.split(".")[0]
+                if _id in targets:
+                    self._targets[_id] = targets[_id]
+                    self._data[f] = BamcheckReader(fpath, auto_close=True)
                     self._len += 1
 
-                    class_label = decode_class(classes, targets[lanelet])
+                    class_label = decode_class(classes, targets[_id])
                     count_class(classes, class_label)
                 else:
-                    print "[WARN] BAM missing TARGET"
+                    print "[WARN] INPUT missing TARGET"
 
 
     def __len__(self):
@@ -89,8 +89,8 @@ class Statplexer(object):
 
     def list_regressors(self):
         regressors = []
-        for bam in sorted(self._data):
-            for r in self._data[bam].summary:
+        for observation in sorted(self._data):
+            for r in self._data[observation].summary:
                 if r not in regressors:
                     regressors.append(r)
             break
@@ -98,8 +98,8 @@ class Statplexer(object):
 
     def find_regressors(self, queries):
         regressors = []
-        for bam in sorted(self._data):
-            for r in self._data[bam].summary:
+        for observation in sorted(self._data):
+            for r in self._data[observation].summary:
                 for query in queries:
                     if query in r:
                         if r not in regressors:
@@ -122,18 +122,18 @@ class Statplexer(object):
 
     def get_regressors(self, names):
         np_array = np.empty([len(self),len(names)])
-        for i, bam in enumerate(sorted(self._data)):
-            bam_n = np.zeros(len(names))
+        for i, observation in enumerate(sorted(self._data)):
+            observation_n = np.zeros(len(names))
             for j, regressor in enumerate(names):
-                bam_n[j] = self._data[bam].summary[regressor]
-            np_array[i] = bam_n
+                observation_n[j] = self._data[observation].summary[regressor]
+            np_array[i] = observation_n
         return np_array
 
     def get_data_by_target(self, names, targets):
 
         total = 0
-        for lanelet in self._targets:
-            target = self._targets[lanelet]
+        for _id in self._targets:
+            target = self._targets[_id]
             if targets:
                 if target in targets:
                     total += 1
@@ -145,29 +145,29 @@ class Statplexer(object):
 
         counter = 0
         levels = []
-        for bam in sorted(self._data):
-            lanelet = bam.split(".")[0]
-            target = self._targets[lanelet]
+        for observation in sorted(self._data):
+            _id = observation.split(".")[0]
+            target = self._targets[_id]
             if targets:
                 if target not in targets:
                     continue
 
-            bam_n = np.zeros(len(names))
+            observation_n = np.zeros(len(names))
             for j, regressor in enumerate(names):
-                bam_n[j] = self._data[bam].summary[regressor]
-            data_np_array[counter] = bam_n
-            targ_np_array[counter] = self._targets[lanelet]
-            if self._targets[lanelet] not in levels:
-                levels.append(self._targets[lanelet])
+                observation_n[j] = self._data[observation].summary[regressor]
+            data_np_array[counter] = observation_n
+            targ_np_array[counter] = self._targets[_id]
+            if self._targets[_id] not in levels:
+                levels.append(self._targets[_id])
             counter += 1
 
         return data_np_array, targ_np_array, sorted(levels)
 
     def get_targets(self):
         np_array = np.empty([len(self)])
-        for i, bam in enumerate(sorted(self._data)):
-            lanelet = bam.split(".")[0]
-            np_array[i] = self._targets[lanelet]
+        for i, observation in enumerate(sorted(self._data)):
+            _id = observation.split(".")[0]
+            np_array[i] = self._targets[_id]
         return np_array
 
     def count_targets_by_class(self, targets=None):
