@@ -2,7 +2,7 @@ from Frontier.frontier import classify_label, encode_class
 
 class AQCReader(object):
 
-    def __init__(self, filepath, CLASSES, auto_close=False):
+    def __init__(self, filepath, CLASSES=None, auto_close=False):
         """Constructs the read only file handler"""
         self.handler = open(filepath, 'r')
         self.handler.seek(0)
@@ -21,8 +21,12 @@ class AQCReader(object):
             fields = line.split("\t")
 
             _id = fields[0]
-            _class = classify_label(CLASSES, fields[4])
-            _code = encode_class(CLASSES, _class)
+            if CLASSES is None:
+                _class = fields[4]
+                _code = _class
+            else:
+                _class = classify_label(CLASSES, fields[4])
+                _code = encode_class(CLASSES, _class)
 
             self.targets[_id] = _code
 
