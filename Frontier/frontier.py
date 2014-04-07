@@ -108,18 +108,16 @@ class Statplexer(object):
             break
         return sorted(regressors)
 
-    def exclude_regressors(self, queries):
-        regressors = []
-        for bam in sorted(self._data):
-            for r in self._data[bam].summary:
-                for query in queries:
-                    if query not in r:
-                        if r not in regressors:
-                            regressors.append(r)
-                            break
-                    else:
-                        break
-            break
+    def exclude_regressors(self, queries, exact=False):
+        regressors = self.list_regressors()
+        for query in queries:
+            for i, r in enumerate(regressors):
+                if exact:
+                    if query.lower() == r.lower():
+                        regressors.pop(i)
+                else:
+                    if query.lower() in r.lower():
+                        regressors.pop(i)
         return sorted(regressors)
 
     def get_regressors(self, names):
@@ -191,7 +189,7 @@ class Statplexer(object):
             sys.stdout.write(message)
             o.write(message)
 
-        o = open(log_filename, 'w')
+        o = open(log_filename, 'a')
         write("Frontier\n")
         write("********\n")
         write("Data Dir\t%s\n" % self.data_dir)
