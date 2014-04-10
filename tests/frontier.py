@@ -256,8 +256,8 @@ class TestFrontier(unittest.TestCase):
         search_terms = ["max-distance"]
         self.assertRaises(KeyError, self.plex.get_data_by_regressors, search_terms)
 
-    def test_get_data_by_target(self):
-        search_terms = ["hoot", "hoothoot"]
+    def test_get_data_by_targets(self):
+        search_terms = ["hoot", "hoothoot", "number-of-doctorates"]
         search_targets = [3, 2]
         data, target, levels = self.plex.get_data_by_target(search_terms, search_targets)
 
