@@ -51,6 +51,7 @@ class Statplexer(object):
 
         if data_dir and target_path:
             #TODO Better handling for missing targets
+            #TODO Better handling to ensure all observations have all variables
             # targets written to local variable rather than self._targets class
             # variable to ensure only targets for observations actually seen in
             # the input data are added to the data structure
@@ -71,10 +72,40 @@ class Statplexer(object):
                     else:
                         print "[WARN] INPUT missing TARGET"
 
+            #TODO Test Variance
+            self.__test_variance()
+            #TODO Warn when no files are input
+
+    def __test_variance(self):
+        regressors = self.list_regressors()
+        variances = np.zeros(len(regressors))
+        means = np.zeros(len(regressors))
+
+        for i, observation in enumerate(sorted(self._data)):
+            for j, regressor in enumerate(sorted(regressors)):
+                obs_val = self._data[observation][regressor]
+                if means[j] == 0.0:
+                    means[j] = obs_val
+
+                last_mean = means[j]
+                last_variance = variances[j]
+
+                means[j] = (last_mean + (obs_val - last_mean)/(i+1))
+                variances[j] = last_variance + (obs_val - last_mean)*(obs_val - means[j])
+
+        # TODO Sample or population? (Technically moot as we only care about 0)
+        variances /= i+1
+        for i, variance in enumerate(variances):
+            if variance == 0.0:
+                print("[WARN] %s parameter has NIL variance (with mean %.2f)"
+                        % (regressors[i], means[i]))
+
     def __len__(self):
         return len(self._data)
 
     def list_regressors(self):
+        #TODO Need better method of getting all parameters than
+        #     breaking out of counting the first observation...
         regressors = []
         for observation in sorted(self._data):
             for r in self._data[observation]:
