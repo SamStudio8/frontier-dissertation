@@ -50,33 +50,38 @@ class Statplexer(object):
             self._classes[cl]["count"] = 0
 
         if data_dir and target_path:
-            #TODO Better handling for missing targets
-            #TODO Better handling to ensure all observations have all variables
-            # targets written to local variable rather than self._targets class
-            # variable to ensure only targets for observations actually seen in
-            # the input data are added to the data structure
-            targets = TARGET_READER_CLASS(target_path, classes, auto_close=True).get_targets()
+            self.load_data(data_dir, target_path, DATA_READER_CLASS, TARGET_READER_CLASS)
 
-            for root, subfolders, files in os.walk(self.data_dir):
-                print root + "(" + str(len(files)) + " files)"
-                for f in files:
-                    fpath = os.path.join(root, f)
+    def load_data(self, data_dir, target_path, DATA_READER_CLASS, TARGET_READER_CLASS):
+        #TODO Better handling for missing targets
+        #TODO Better handling to ensure all observations have all variables
 
-                    _id = f.split(".")[0]
-                    if _id in targets:
-                        self._targets[_id] = targets[_id]
-                        self._data[f] = DATA_READER_CLASS(fpath, classes, auto_close=True).get_data()
+        # targets written to local variable rather than self._targets class
+        # variable to ensure only targets for observations actually seen in
+        # the input data are added to the data structure
+        targets = TARGET_READER_CLASS(target_path, self._classes, auto_close=True).get_targets()
 
-                        class_label = decode_class(classes, targets[_id])
-                        count_class(classes, class_label)
-                    else:
-                        print "[WARN] INPUT missing TARGET"
+        for root, subfolders, files in os.walk(self.data_dir):
+            print root + "(" + str(len(files)) + " files)"
+            for f in files:
+                fpath = os.path.join(root, f)
 
-            #TODO Test Variance
-            self.__test_variance()
-            #TODO Warn when no files are input
+                _id = f.split(".")[0]
+                if _id in targets:
+                    self._targets[_id] = targets[_id]
+                    self._data[f] = DATA_READER_CLASS(fpath, self._classes, auto_close=True).get_data()
 
-    def __test_variance(self):
+                    class_label = decode_class(self._classes, targets[_id])
+                    count_class(self._classes, class_label)
+                else:
+                    print "[WARN] INPUT missing TARGET"
+
+        #TODO Warn when no files are input
+
+        # Test parameter variances and output warning if zero
+        self._test_variance()
+
+    def _test_variance(self):
         regressors = self.list_regressors()
         variances = np.zeros(len(regressors))
         means = np.zeros(len(regressors))
@@ -93,7 +98,9 @@ class Statplexer(object):
                 means[j] = (last_mean + (obs_val - last_mean)/(i+1))
                 variances[j] = last_variance + (obs_val - last_mean)*(obs_val - means[j])
 
-        # TODO Sample or population? (Technically moot as we only care about 0)
+        # TODO Sample or population (n-1 vs n, where n is i+1)?
+        #      Although technically moot as we only care about 0 and the
+        #      absolute difference would be relatively trivial for larger n
         variances /= i+1
         for i, variance in enumerate(variances):
             if variance == 0.0:
