@@ -22,6 +22,7 @@ class AbstractReader(object):
 
     def close(self):
         """Close the file handler"""
+        #TODO Check file is not already closed...
         self.handler.close()
 
     def get_data(self):

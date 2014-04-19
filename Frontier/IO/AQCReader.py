@@ -3,7 +3,7 @@ from Frontier.IO.AbstractReader import AbstractReader
 
 class AQCReader(AbstractReader):
 
-    def __init__(self, filepath, CLASSES=None, auto_close=False):
+    def __init__(self, filepath, CLASSES=None, auto_close=True):
         self.targets = {}
         super(AQCReader, self).__init__(filepath, CLASSES, auto_close, 1)
 
