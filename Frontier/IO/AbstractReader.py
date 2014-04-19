@@ -6,6 +6,10 @@ class AbstractReader(object):
         """Constructs the read only file handler"""
         self.header = header
         self.CLASSES = CLASSES
+
+        if not filepath:
+            raise IOError("You must specify a file.")
+
         self.handler = open(filepath, 'r')
         self.process_file()
 
@@ -21,10 +25,10 @@ class AbstractReader(object):
         self.handler.close()
 
     def get_data(self):
-        raise NotImplementedError
+        raise NotImplementedError("get_data has not been implemented")
 
     def process_line(self, line):
-        raise NotImplementedError
+        raise NotImplementedError("process_line has not been implemented")
 
     def process_file(self):
         """Calls process_line for each line in input file"""
