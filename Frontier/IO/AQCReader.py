@@ -1,42 +1,25 @@
 from Frontier.frontier import classify_label, encode_class
+from Frontier.IO.AbstractReader import AbstractReader
 
-class AQCReader(object):
+class AQCReader(AbstractReader):
 
     def __init__(self, filepath, CLASSES=None, auto_close=False):
-        """Constructs the read only file handler"""
-        self.handler = open(filepath, 'r')
-        self.handler.seek(0)
         self.targets = {}
+        super(AQCReader, self).__init__(filepath, CLASSES, auto_close, 1)
 
-        self.process_file(CLASSES)
+    def process_line(self, line):
+        fields = line.split("\t")
 
-        if auto_close:
-            self.close()
+        _id = fields[0]
+        if self.CLASSES is None:
+            _class = fields[4]
+            _code = _class
+        else:
+            _class = classify_label(self.CLASSES, fields[4])
+            _code = encode_class(self.CLASSES, _class)
 
-    def process_file(self, CLASSES):
-        """Parse lines in to dict"""
-        self.handler.readline() # Skip header
-        for uline in self.handler:
-            line = uline.strip()
-            fields = line.split("\t")
+        self.targets[_id] = _code
 
-            _id = fields[0]
-            if CLASSES is None:
-                _class = fields[4]
-                _code = _class
-            else:
-                _class = classify_label(CLASSES, fields[4])
-                _code = encode_class(CLASSES, _class)
-
-            self.targets[_id] = _code
-
-    def get_targets(self):
+    def get_data(self):
         return self.targets
 
-    def close(self):
-        """Close the file handler"""
-        self.handler.close()
-
-    def __iter__(self):
-        self.handler.seek(0) # Reset the file pointer
-        return self.handler

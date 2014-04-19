@@ -59,7 +59,7 @@ class Statplexer(object):
         # targets written to local variable rather than self._targets class
         # variable to ensure only targets for observations actually seen in
         # the input data are added to the data structure
-        targets = TARGET_READER_CLASS(target_path, self._classes, auto_close=True).get_targets()
+        targets = TARGET_READER_CLASS(target_path, self._classes, auto_close=True).get_data()
 
         for root, subfolders, files in os.walk(self.data_dir):
             print root + "(" + str(len(files)) + " files)"

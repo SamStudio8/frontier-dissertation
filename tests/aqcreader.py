@@ -153,13 +153,13 @@ class TestAQCReader(unittest.TestCase):
     def test_size_targets(self):
         # Should be a target for each line of input (minus header)
         example_lines = open(DATA_PATH).readlines()
-        targets = aqcr.AQCReader(DATA_PATH).get_targets()
+        targets = aqcr.AQCReader(DATA_PATH).get_data()
         self.assertEqual(len(example_lines) - 1, len(targets))
 
     # Somewhat arbitrary...
     def test_line_content(self):
         aqc = aqcr.AQCReader(DATA_PATH, auto_close=False)
-        targets = aqc.get_targets()
+        targets = aqc.get_data()
 
         for t in targets:
             self.assertEqual(TEST_DATA[t]["aqc"], targets[t])
@@ -168,7 +168,7 @@ class TestAQCReader(unittest.TestCase):
     # Probably somewhat arbitrary also...
     def test_particular_line_content(self):
         aqc = aqcr.AQCReader(DATA_UNIQ_PATH)
-        targets = aqc.get_targets()
+        targets = aqc.get_data()
 
         self.assertEqual(TEST_UNIQ_DATA["9998_9#4"]["aqc"], targets["9998_9#4"])
         self.assertEqual(TEST_UNIQ_DATA["9998_9#6"]["aqc"], targets["9998_9#6"])
@@ -176,7 +176,7 @@ class TestAQCReader(unittest.TestCase):
     # Quick test for integration with Frontier label utils
     def test_coded_line_content(self):
         aqc = aqcr.AQCReader(DATA_PATH, EXAMPLE_CLASSES)
-        targets = aqc.get_targets()
+        targets = aqc.get_data()
 
         for t in targets:
             expected_class = classify_label(EXAMPLE_CLASSES, TEST_DATA[t]["aqc"])
