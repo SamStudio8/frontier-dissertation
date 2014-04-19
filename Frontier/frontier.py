@@ -38,14 +38,14 @@ def count_class(classes, class_label):
 
 class Statplexer(object):
 
-    def __init__(self, data_dir, target_path, classes, DATA_READER_CLASS, TARGET_READER_CLASS):
+    def __init__(self, data_dir, target_path, CLASSES, DATA_READER_CLASS, TARGET_READER_CLASS):
         self.data_dir = data_dir
         self.target_path = target_path
 
         self._data = {}
         self._targets = {}
 
-        self._classes = classes
+        self._classes = CLASSES.copy()
         for cl in self._classes:
             self._classes[cl]["_count"] = 0
 
