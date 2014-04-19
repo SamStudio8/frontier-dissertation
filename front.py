@@ -185,20 +185,20 @@ class QC:
 
         # Process parameter_set
         if self.parameter_set == "ALL":
-            self.regressors = self.statplexer.list_regressors()
+            self.parameters = self.statplexer.list_parameters()
         elif "find" in self.PARAMETER_SETS[self.parameter_set]:
-            self.regressors = self.statplexer.find_regressors(self.PARAMETER_SETS[self.parameter_set]["find"])
+            self.parameters = self.statplexer.find_parameters(self.PARAMETER_SETS[self.parameter_set]["find"])
         elif "exclude" in self.PARAMETER_SETS[self.parameter_set]:
-            self.regressors = self.statplexer.exclude_regressors(self.PARAMETER_SETS[self.parameter_set]["exclude"])
+            self.parameters = self.statplexer.exclude_parameters(self.PARAMETER_SETS[self.parameter_set]["exclude"])
         else:
             #TODO Check this is a list, not a dict with incorrect keys
-            self.regressors = self.PARAMETER_SETS[self.parameter_set]
+            self.parameters = self.PARAMETER_SETS[self.parameter_set]
 
         self.execute()
 
     def execute(self):
-        data, target, levels = self.statplexer.get_data_by_target(self.regressors, self.override_codes)
-        w_data, w_target, w_levels = self.statplexer.get_data_by_target(self.regressors, [CLASSES["warn"]["code"]])
+        data, target, levels = self.statplexer.get_data_by_target(self.parameters, self.override_codes)
+        w_data, w_target, w_levels = self.statplexer.get_data_by_target(self.parameters, [CLASSES["warn"]["code"]])
 
         # Sanity
         if len(data) != len(target):
@@ -256,9 +256,9 @@ class QC:
         imps = {}
         for importance_run in importances:
             for i, entry in enumerate(importance_run):
-                if self.regressors[i] not in imps:
-                    imps[self.regressors[i]] = []
-                imps[self.regressors[i]].append(entry)
+                if self.parameters[i] not in imps:
+                    imps[self.parameters[i]] = []
+                imps[self.parameters[i]].append(entry)
         imp_means = {}
         for name, score_list in imps.items():
             imp_means[name] = sum(score_list)/len(score_list)
@@ -267,7 +267,7 @@ class QC:
         total_used = len(target)
         if not self.no_log:
             log_filename = "log/" + datetime.datetime.now().strftime("%Y-%m-%d_%H%M") + "__" + self.data_set + "_" + self.parameter_set + "_" + str(int(scores.mean() * 100)) + ".txt"
-            self.statplexer.write_log(log_filename, pdf_path, self.data_set, self.parameter_set, self.regressors, target, scores, self.folds, importance)
+            self.statplexer.write_log(log_filename, pdf_path, self.data_set, self.parameter_set, self.parameters, target, scores, self.folds, importance)
 
 
 if __name__ == "__main__":

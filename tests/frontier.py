@@ -106,8 +106,8 @@ class TestFrontier(unittest.TestCase):
                 cls.plex._data[sample_name][tp] = i * j
             cls.plex._targets[sample_name] = TARGETS[i]
 
-    def test_list_regressors(self):
-        parameters = self.plex.list_regressors()
+    def test_list_parameters(self):
+        parameters = self.plex.list_parameters()
         self.assertEqual(len(TEST_PARAMETERS), len(parameters))
 
         for p in parameters:
@@ -115,50 +115,50 @@ class TestFrontier(unittest.TestCase):
 
     def test_find_regressor(self):
         search_term = "hoot"
-        parameters = self.plex.find_regressors([search_term])
+        parameters = self.plex.find_parameters([search_term])
         self.assertEqual(2, len(parameters))
 
         for p in parameters:
             self.assertIn(search_term, p)
 
         search_term = "hoothoot"
-        parameters = self.plex.find_regressors([search_term])
+        parameters = self.plex.find_parameters([search_term])
         self.assertEqual(1, len(parameters))
 
         for p in parameters:
             self.assertIn(search_term, p)
 
         search_term = "wing-span"
-        parameters = self.plex.find_regressors([search_term])
+        parameters = self.plex.find_parameters([search_term])
         self.assertEqual(1, len(parameters))
 
         for p in parameters:
             self.assertIn(search_term, p)
 
-    def test_find_regressors(self):
+    def test_find_parameters(self):
         search_terms = ["wing-span", "hoot"]
-        parameters = self.plex.find_regressors(search_terms)
+        parameters = self.plex.find_parameters(search_terms)
         self.assertEqual(3, len(parameters))
 
         for p in parameters:
             self.assertTrue(search_terms[0] in p or search_terms[1] in p)
 
     def test_find_regressor_unknown(self):
-        parameters = self.plex.find_regressors(["imgur-appearances"])
+        parameters = self.plex.find_parameters(["imgur-appearances"])
         self.assertEqual(0, len(parameters))
 
-    def test_find_regressors_unknown(self):
-        parameters = self.plex.find_regressors(["confirmed-kills", "height"])
+    def test_find_parameters_unknown(self):
+        parameters = self.plex.find_parameters(["confirmed-kills", "height"])
         self.assertEqual(0, len(parameters))
 
-        parameters = self.plex.find_regressors(["confirmed-kills", "height", "hoot"])
+        parameters = self.plex.find_parameters(["confirmed-kills", "height", "hoot"])
         self.assertEqual(2, len(parameters))
         for p in parameters:
             self.assertIn("hoot", p)
 
     def test_exclude_regressor(self):
         exclude_term = "hoot"
-        parameters = self.plex.exclude_regressors([exclude_term])
+        parameters = self.plex.exclude_parameters([exclude_term])
         self.assertEqual(8, len(parameters))
 
         for p in parameters:
@@ -166,38 +166,38 @@ class TestFrontier(unittest.TestCase):
 
     def test_exclude_regressor_exact(self):
         exclude_term = "hoot"
-        parameters = self.plex.exclude_regressors([exclude_term], exact=True)
+        parameters = self.plex.exclude_parameters([exclude_term], exact=True)
         self.assertEqual(9, len(parameters))
 
         exclude_term = "owl-ratio"
-        parameters = self.plex.exclude_regressors([exclude_term], exact=True)
+        parameters = self.plex.exclude_parameters([exclude_term], exact=True)
         self.assertEqual(9, len(parameters))
 
         for p in parameters:
             self.assertNotIn("owl-ratio", p)
 
-    def test_exclude_regressors(self):
+    def test_exclude_parameters(self):
         exclude_terms = ["wing-span", "hoot"]
-        parameters = self.plex.exclude_regressors(exclude_terms)
+        parameters = self.plex.exclude_parameters(exclude_terms)
         self.assertEqual(7, len(parameters))
 
         for p in parameters:
             self.assertFalse(exclude_terms[0] in p or exclude_terms[1] in p)
 
         exclude_terms = ["talon", "hoot"]
-        parameters = self.plex.exclude_regressors(exclude_terms)
+        parameters = self.plex.exclude_parameters(exclude_terms)
         self.assertEqual(6, len(parameters))
 
         for p in parameters:
             self.assertFalse(exclude_terms[0] in p or exclude_terms[1] in p)
 
-    def test_exclude_regressors_exact(self):
+    def test_exclude_parameters_exact(self):
         exclude_terms = ["wing-span", "hoot"]
-        parameters = self.plex.exclude_regressors(exclude_terms, exact=True)
+        parameters = self.plex.exclude_parameters(exclude_terms, exact=True)
         self.assertEqual(8, len(parameters))
 
         exclude_terms = ["wiseness-coefficient", "talon-sharpness"]
-        parameters = self.plex.exclude_regressors(exclude_terms, exact=True)
+        parameters = self.plex.exclude_parameters(exclude_terms, exact=True)
         self.assertEqual(8, len(parameters))
 
         for p in parameters:
@@ -213,16 +213,16 @@ class TestFrontier(unittest.TestCase):
         for i, t in enumerate(targets):
             self.assertEqual(TARGETS[i], t)
 
-    def test_number_get_data_by_regressors(self):
+    def test_number_get_data_by_parameters(self):
         search_terms = ["hoot", "talon-length"]
-        data = self.plex.get_data_by_regressors(search_terms)
+        data = self.plex.get_data_by_parameters(search_terms)
 
         self.assertEqual(NUM_OBSERVATIONS, data.shape[0])
         self.assertEqual(len(search_terms), data.shape[1])
 
-    def test_get_data_by_regressors(self):
+    def test_get_data_by_parameters(self):
         search_terms = ["hoot", "talon-length"]
-        data = self.plex.get_data_by_regressors(search_terms)
+        data = self.plex.get_data_by_parameters(search_terms)
 
         self.assertEqual(NUM_OBSERVATIONS, data.shape[0])
         self.assertEqual(len(search_terms), data.shape[1])
@@ -236,7 +236,7 @@ class TestFrontier(unittest.TestCase):
 
     def test_get_data_by_regressor(self):
         search_terms = ["wiseness-coefficient"]
-        data = self.plex.get_data_by_regressors(search_terms)
+        data = self.plex.get_data_by_parameters(search_terms)
 
         self.assertEqual(NUM_OBSERVATIONS, data.shape[0])
         self.assertEqual(len(search_terms), data.shape[1])
@@ -248,13 +248,13 @@ class TestFrontier(unittest.TestCase):
                 j = TEST_PARAMETERS.index(search_terms[k])
                 self.assertEqual(i*j, data[i,k])
 
-    def test_get_data_by_unknown_regressors(self):
+    def test_get_data_by_unknown_parameters(self):
         search_terms = ["hoothoot", "hoot", "talon-length", "max-altitude"]
-        self.assertRaises(KeyError, self.plex.get_data_by_regressors, search_terms)
+        self.assertRaises(KeyError, self.plex.get_data_by_parameters, search_terms)
 
     def test_get_data_by_unknown_regressor(self):
         search_terms = ["max-distance"]
-        self.assertRaises(KeyError, self.plex.get_data_by_regressors, search_terms)
+        self.assertRaises(KeyError, self.plex.get_data_by_parameters, search_terms)
 
     def test_get_data_by_targets(self):
         search_terms = ["hoot", "hoothoot", "number-of-doctorates"]

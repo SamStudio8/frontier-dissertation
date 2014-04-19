@@ -82,12 +82,12 @@ class Statplexer(object):
         self._test_variance()
 
     def _test_variance(self):
-        regressors = self.list_regressors()
-        variances = np.zeros(len(regressors))
-        means = np.zeros(len(regressors))
+        parameters = self.list_parameters()
+        variances = np.zeros(len(parameters))
+        means = np.zeros(len(parameters))
 
         for i, observation in enumerate(sorted(self._data)):
-            for j, regressor in enumerate(sorted(regressors)):
+            for j, regressor in enumerate(sorted(parameters)):
                 obs_val = self._data[observation][regressor]
                 if means[j] == 0.0:
                     means[j] = obs_val
@@ -105,39 +105,39 @@ class Statplexer(object):
         for i, variance in enumerate(variances):
             if variance == 0.0:
                 print("[WARN] %s parameter has NIL variance (with mean %.2f)"
-                        % (regressors[i], means[i]))
+                        % (parameters[i], means[i]))
 
     def __len__(self):
         return len(self._data)
 
-    def list_regressors(self):
+    def list_parameters(self):
         #TODO Need better method of getting all parameters than
         #     breaking out of counting the first observation...
-        regressors = []
+        parameters = []
         for observation in sorted(self._data):
             for r in self._data[observation]:
-                if r not in regressors:
-                    regressors.append(r)
+                if r not in parameters:
+                    parameters.append(r)
             break
-        return sorted(regressors)
+        return sorted(parameters)
 
-    def find_regressors(self, queries):
-        regressors = []
+    def find_parameters(self, queries):
+        parameters = []
         for observation in sorted(self._data):
             for r in self._data[observation]:
                 for query in queries:
                     if query in r:
-                        if r not in regressors:
-                            regressors.append(r)
+                        if r not in parameters:
+                            parameters.append(r)
                             continue
             break
-        return sorted(regressors)
+        return sorted(parameters)
 
-    def exclude_regressors(self, queries, exact=False):
-        regressors = self.list_regressors()
+    def exclude_parameters(self, queries, exact=False):
+        parameters = self.list_parameters()
         to_remove = []
         for query in queries:
-            for i, r in enumerate(regressors):
+            for i, r in enumerate(parameters):
                 if exact:
                     if query.lower() == r.lower():
                         to_remove.append(r)
@@ -146,10 +146,10 @@ class Statplexer(object):
                         to_remove.append(r)
 
         for key in to_remove:
-            regressors.remove(key)
-        return sorted(regressors)
+            parameters.remove(key)
+        return sorted(parameters)
 
-    def get_data_by_regressors(self, names):
+    def get_data_by_parameters(self, names):
         np_array = np.empty([len(self),len(names)])
         for i, observation in enumerate(sorted(self._data)):
             observation_n = np.zeros(len(names))
@@ -195,6 +195,7 @@ class Statplexer(object):
     def get_targets(self):
         np_array = np.empty([len(self)])
         for i, observation in enumerate(sorted(self._data)):
+            #TODO Hard coded handling for file names being used as keys
             _id = observation.split(".")[0]
             np_array[i] = self._targets[_id]
         return np_array
@@ -212,7 +213,7 @@ class Statplexer(object):
             counts[class_label] += 1
         return counts
 
-    def write_log(self, log_filename, pdf_filename, data_set, param_set, regressors, used_targets, scores, folds, importance):
+    def write_log(self, log_filename, pdf_filename, data_set, param_set, parameters, used_targets, scores, folds, importance):
 
         def write(message):
             sys.stdout.write(message)
@@ -232,9 +233,9 @@ class Statplexer(object):
         write("Total Used\t%d\n" % len(used_targets))
         write("\n")
         write("Param Set\t%s\n" % param_set)
-        write("Param Count\t%d\n" % len(regressors))
+        write("Param Count\t%d\n" % len(parameters))
         write("Param List:\n")
-        for param in regressors:
+        for param in parameters:
             write("\t\t%s\n" % param)
         write("\n")
         write("Feature Importances:\n")
