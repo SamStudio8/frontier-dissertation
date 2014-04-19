@@ -30,7 +30,7 @@ class AbstractReader(object):
         """Calls process_line for each line in input file"""
 
         # Skip Header
-        for i in range(0,1):
+        for i in range(0,self.header):
             self.handler.readline()
 
         for line in self.handler:
