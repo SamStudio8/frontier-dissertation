@@ -171,7 +171,7 @@ class QC:
                             (class_label, new_code, self.CLASSES[class_label]["code"]))
                     #TODO Check this code is actually used?
                     self.CLASSES[class_label]["code"] = new_code
-                    self.CLASSES[class_label]["recoded"] = True
+                    self.CLASSES[class_label]["_recode"] = True
 
         self.statplexer = frontier.Statplexer(
             self.data_dir,

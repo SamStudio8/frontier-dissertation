@@ -24,7 +24,7 @@ def encode_class(classes, class_label):
 
 def decode_class(classes, class_code):
     for cl in classes:
-        if classes[cl]["code"] == class_code and "recoded" not in classes[cl]:
+        if classes[cl]["code"] == class_code and "_recode" not in classes[cl]:
             return cl
     raise Exception("Unknown Label Code: %s" % class_code)
 
