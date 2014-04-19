@@ -32,9 +32,9 @@ def count_class(classes, class_label):
     if not class_label in classes:
         raise Exception("Unknown Class: %s" % class_label)
 
-    if "count" not in classes[class_label]:
-        classes[class_label]["count"] = 0
-    classes[class_label]["count"] += 1
+    if "_count" not in classes[class_label]:
+        classes[class_label]["_count"] = 0
+    classes[class_label]["_count"] += 1
 
 class Statplexer(object):
 
@@ -47,7 +47,7 @@ class Statplexer(object):
 
         self._classes = classes
         for cl in self._classes:
-            self._classes[cl]["count"] = 0
+            self._classes[cl]["_count"] = 0
 
         if data_dir and target_path:
             self.load_data(data_dir, target_path, DATA_READER_CLASS, TARGET_READER_CLASS)
@@ -226,7 +226,7 @@ class Statplexer(object):
         write("AQC File\t%s\n" % self.target_path)
         write("\n")
         write("Class Def\t" + "\t".join([cl for cl in sorted(self._classes)]) + "\n")
-        write("Class Read\t" + "\t".join([str(v["count"]) for k,v in sorted(self._classes.items())]) + "\n")
+        write("Class Read\t" + "\t".join([str(v["_count"]) for k,v in sorted(self._classes.items())]) + "\n")
         write("Class Used\t" + "\t".join([str(v) for k,v in sorted(self.count_targets_by_class(used_targets).items())]) + "\n")
         write("\n")
         write("Total Read\t%d\n" % len(self))

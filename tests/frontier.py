@@ -63,7 +63,7 @@ class TestFrontierUtils(unittest.TestCase):
         for class_name in COUNT_LIST:
             f.count_class(CLASSES_COPY, class_name)
         for class_name in CLASSES_COPY:
-            self.assertEqual(EXPECT_COUNT[class_name], CLASSES_COPY[class_name]["count"])
+            self.assertEqual(EXPECT_COUNT[class_name], CLASSES_COPY[class_name]["_count"])
 
     def test_count_unknown_class(self):
         self.assertRaises(Exception, f.count_class, CLASSES, "hoot")
