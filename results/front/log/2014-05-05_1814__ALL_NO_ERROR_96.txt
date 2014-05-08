@@ -1,0 +1,124 @@
+Frontier
+********
+Data Dir	/pools/encrypted/sanger/frontier/data/bamcheck_2013dec25_ratios_out/
+AQC File	/pools/encrypted/sanger/frontier/data/crohns-uc-table-a.2013dec25.manual_qc_update.txt
+
+Class Def	fail	pass	warn
+Class Read	1542	9154	2759
+Class Used	1542	9154	2759
+
+Total Read	13455
+Total Used	13455
+
+Param Set	NO_ERROR
+Param Count	85
+Param List:
+		1st-fragments
+		A-percent-max-above-baseline
+		A-percent-max-baseline-deviation
+		A-percent-max-below-baseline
+		A-percent-mean-above-baseline
+		A-percent-mean-below-baseline
+		A-percent-total-mean-baseline-deviation
+		C-percent-max-above-baseline
+		C-percent-max-baseline-deviation
+		C-percent-max-below-baseline
+		C-percent-mean-above-baseline
+		C-percent-mean-below-baseline
+		C-percent-total-mean-baseline-deviation
+		G-percent-max-above-baseline
+		G-percent-max-baseline-deviation
+		G-percent-max-below-baseline
+		G-percent-mean-above-baseline
+		G-percent-mean-below-baseline
+		G-percent-total-mean-baseline-deviation
+		T-percent-max-above-baseline
+		T-percent-max-baseline-deviation
+		T-percent-max-below-baseline
+		T-percent-mean-above-baseline
+		T-percent-mean-below-baseline
+		T-percent-total-mean-baseline-deviation
+		average-length
+		average-quality
+		bases-duplicated
+		bases-mapped
+		bases-mapped-(cigar)
+		bases-trimmed
+		duplicate-mapped-ratio
+		filtered-sequences
+		fwd-percent-deletions-above-baseline
+		fwd-percent-deletions-below-baseline
+		fwd-percent-insertions-above-baseline
+		fwd-percent-insertions-below-baseline
+		indel-ratio
+		insert-size-average
+		insert-size-standard-deviation
+		inward-oriented-pairs
+		is-paired
+		is-sorted
+		last-fragments
+		max-max-baseline-deviation
+		max-total-mean-baseline-deviation
+		maximum-length
+		mismatches
+		non-primary-alignments
+		outward-oriented-pairs
+		pairs-on-different-chromosomes
+		pairs-with-other-orientation
+		quality-dropoff-fwd-high-iqr-end-read-cycle
+		quality-dropoff-fwd-high-iqr-max-contiguous-read-cycles
+		quality-dropoff-fwd-high-iqr-start-read-cycle
+		quality-dropoff-fwd-mean-runmed-decline-end-read-cycle
+		quality-dropoff-fwd-mean-runmed-decline-high-value
+		quality-dropoff-fwd-mean-runmed-decline-low-value
+		quality-dropoff-fwd-mean-runmed-decline-max-contiguous-read-cycles
+		quality-dropoff-fwd-mean-runmed-decline-start-read-cycle
+		quality-dropoff-high-iqr-threshold
+		quality-dropoff-ignore-edge-cycles
+		quality-dropoff-rev-high-iqr-end-read-cycle
+		quality-dropoff-rev-high-iqr-max-contiguous-read-cycles
+		quality-dropoff-rev-high-iqr-start-read-cycle
+		quality-dropoff-rev-mean-runmed-decline-end-read-cycle
+		quality-dropoff-rev-mean-runmed-decline-high-value
+		quality-dropoff-rev-mean-runmed-decline-low-value
+		quality-dropoff-rev-mean-runmed-decline-max-contiguous-read-cycles
+		quality-dropoff-rev-mean-runmed-decline-start-read-cycle
+		quality-dropoff-runmed-k
+		raw-total-sequences
+		reads-MQ0
+		reads-QC-failed
+		reads-duplicated
+		reads-mapped
+		reads-paired
+		reads-unmapped
+		reads-unpaired
+		rev-percent-deletions-above-baseline
+		rev-percent-deletions-below-baseline
+		rev-percent-insertions-above-baseline
+		rev-percent-insertions-below-baseline
+		sequences
+		total-length
+
+Feature Importances:
+		0.27	T-percent-max-above-baseline
+		0.12	rev-percent-insertions-above-baseline
+		0.09	fwd-percent-insertions-above-baseline
+		0.07	quality-dropoff-rev-mean-runmed-decline-low-value
+		0.07	insert-size-average
+		0.05	quality-dropoff-fwd-mean-runmed-decline-low-value
+		0.04	max-max-baseline-deviation
+		0.03	insert-size-standard-deviation
+		0.03	reads-duplicated
+		0.02	duplicate-mapped-ratio
+		0.02	fwd-percent-deletions-above-baseline
+		0.02	rev-percent-insertions-below-baseline
+		0.02	max-total-mean-baseline-deviation
+		0.02	T-percent-max-baseline-deviation
+		0.01	average-quality
+		0.01	A-percent-max-above-baseline
+		0.01	bases-duplicated
+
+CV Score (Fld)	0.97 +/- 0.01 (10)
+
+Decision PDF	pdf/2014-05-05_1813__ALL_NO_ERROR_/
+********

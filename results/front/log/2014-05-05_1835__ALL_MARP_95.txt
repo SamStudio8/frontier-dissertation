@@ -1,0 +1,85 @@
+Frontier
+********
+Data Dir	/pools/encrypted/sanger/frontier/data/bamcheck_2013dec25_ratios_out/
+AQC File	/pools/encrypted/sanger/frontier/data/crohns-uc-table-a.2013dec25.manual_qc_update.txt
+
+Class Def	fail	pass	warn
+Class Read	1542	9154	2759
+Class Used	1542	9154	2759
+
+Total Read	13455
+Total Used	13455
+
+Param Set	MARP
+Param Count	47
+Param List:
+		A-percent-max-above-baseline
+		A-percent-max-baseline-deviation
+		A-percent-max-below-baseline
+		A-percent-mean-above-baseline
+		A-percent-mean-below-baseline
+		A-percent-total-mean-baseline-deviation
+		C-percent-max-above-baseline
+		C-percent-max-baseline-deviation
+		C-percent-max-below-baseline
+		C-percent-mean-above-baseline
+		C-percent-mean-below-baseline
+		C-percent-total-mean-baseline-deviation
+		G-percent-max-above-baseline
+		G-percent-max-baseline-deviation
+		G-percent-max-below-baseline
+		G-percent-mean-above-baseline
+		G-percent-mean-below-baseline
+		G-percent-total-mean-baseline-deviation
+		T-percent-max-above-baseline
+		T-percent-max-baseline-deviation
+		T-percent-max-below-baseline
+		T-percent-mean-above-baseline
+		T-percent-mean-below-baseline
+		T-percent-total-mean-baseline-deviation
+		average-length
+		average-quality
+		error-rate
+		fwd-percent-deletions-above-baseline
+		fwd-percent-deletions-below-baseline
+		fwd-percent-insertions-above-baseline
+		fwd-percent-insertions-below-baseline
+		insert-size-average
+		max-total-mean-baseline-deviation
+		quality-dropoff-fwd-mean-runmed-decline-end-read-cycle
+		quality-dropoff-fwd-mean-runmed-decline-high-value
+		quality-dropoff-fwd-mean-runmed-decline-low-value
+		quality-dropoff-fwd-mean-runmed-decline-max-contiguous-read-cycles
+		quality-dropoff-fwd-mean-runmed-decline-start-read-cycle
+		quality-dropoff-rev-mean-runmed-decline-end-read-cycle
+		quality-dropoff-rev-mean-runmed-decline-high-value
+		quality-dropoff-rev-mean-runmed-decline-low-value
+		quality-dropoff-rev-mean-runmed-decline-max-contiguous-read-cycles
+		quality-dropoff-rev-mean-runmed-decline-start-read-cycle
+		rev-percent-deletions-above-baseline
+		rev-percent-deletions-below-baseline
+		rev-percent-insertions-above-baseline
+		rev-percent-insertions-below-baseline
+
+Feature Importances:
+		0.27	T-percent-max-above-baseline
+		0.12	rev-percent-insertions-above-baseline
+		0.10	fwd-percent-insertions-above-baseline
+		0.08	quality-dropoff-rev-mean-runmed-decline-low-value
+		0.07	insert-size-average
+		0.05	quality-dropoff-fwd-mean-runmed-decline-low-value
+		0.05	T-percent-max-baseline-deviation
+		0.02	rev-percent-insertions-below-baseline
+		0.02	fwd-percent-deletions-above-baseline
+		0.02	max-total-mean-baseline-deviation
+		0.02	average-quality
+		0.01	A-percent-max-above-baseline
+		0.01	G-percent-max-baseline-deviation
+		0.01	quality-dropoff-fwd-mean-runmed-decline-high-value
+		0.01	fwd-percent-insertions-below-baseline
+		0.01	quality-dropoff-rev-mean-runmed-decline-high-value
+
+CV Score (Fld)	0.95 +/- 0.01 (10)
+
+Decision PDF	pdf/2014-05-05_1834__ALL_MARP_/
+********

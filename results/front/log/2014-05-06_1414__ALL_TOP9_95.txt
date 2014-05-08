@@ -1,0 +1,40 @@
+Frontier
+********
+Data Dir	/pools/encrypted/sanger/frontier/data/bamcheck_2013dec25_ratios_out/
+AQC File	/pools/encrypted/sanger/frontier/data/crohns-uc-table-a.2013dec25.manual_qc_update.txt
+
+Class Def	fail	pass	warn
+Class Read	1542	9154	2759
+Class Used	1542	9154	2759
+
+Total Read	13455
+Total Used	13455
+
+Param Set	TOP9
+Param Count	9
+Param List:
+		A-percent-mean-below-baseline
+		duplicate-mapped-ratio
+		fwd-percent-insertions-above-baseline
+		insert-size-average
+		max-max-baseline-deviation
+		quality-dropoff-fwd-mean-runmed-decline-low-value
+		quality-dropoff-rev-mean-runmed-decline-low-value
+		rev-percent-insertions-above-baseline
+		rev-percent-insertions-below-baseline
+
+Feature Importances:
+		0.32	max-max-baseline-deviation
+		0.13	rev-percent-insertions-above-baseline
+		0.12	fwd-percent-insertions-above-baseline
+		0.11	quality-dropoff-rev-mean-runmed-decline-low-value
+		0.08	quality-dropoff-fwd-mean-runmed-decline-low-value
+		0.08	insert-size-average
+		0.07	duplicate-mapped-ratio
+		0.06	A-percent-mean-below-baseline
+		0.04	rev-percent-insertions-below-baseline
+
+CV Score (Fld)	0.95 +/- 0.01 (10)
+
+Decision PDF	pdf/2014-05-06_1412__ALL_TOP9_/
+********

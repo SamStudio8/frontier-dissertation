@@ -1,0 +1,94 @@
+Frontier
+********
+Data Dir	/pools/encrypted/sanger/frontier/data/bamcheck_2013dec25_ratios_out/
+AQC File	/pools/encrypted/sanger/frontier/data/crohns-uc-table-a.2013dec25.manual_qc_update.txt
+
+Class Def	fail	pass	warn
+Class Read	1542	9154	2759
+Class Used	1542	9154	2759
+
+Total Read	13455
+Total Used	13455
+
+Param Set	NOBASELINE
+Param Count	52
+Param List:
+		1st-fragments
+		average-length
+		average-quality
+		bases-duplicated
+		bases-mapped
+		bases-mapped-(cigar)
+		bases-trimmed
+		duplicate-mapped-ratio
+		error-rate
+		filtered-sequences
+		indel-ratio
+		insert-size-average
+		insert-size-standard-deviation
+		inward-oriented-pairs
+		is-paired
+		is-sorted
+		last-fragments
+		maximum-length
+		mismatches
+		non-primary-alignments
+		outward-oriented-pairs
+		pairs-on-different-chromosomes
+		pairs-with-other-orientation
+		quality-dropoff-fwd-high-iqr-end-read-cycle
+		quality-dropoff-fwd-high-iqr-max-contiguous-read-cycles
+		quality-dropoff-fwd-high-iqr-start-read-cycle
+		quality-dropoff-fwd-mean-runmed-decline-end-read-cycle
+		quality-dropoff-fwd-mean-runmed-decline-high-value
+		quality-dropoff-fwd-mean-runmed-decline-low-value
+		quality-dropoff-fwd-mean-runmed-decline-max-contiguous-read-cycles
+		quality-dropoff-fwd-mean-runmed-decline-start-read-cycle
+		quality-dropoff-high-iqr-threshold
+		quality-dropoff-ignore-edge-cycles
+		quality-dropoff-rev-high-iqr-end-read-cycle
+		quality-dropoff-rev-high-iqr-max-contiguous-read-cycles
+		quality-dropoff-rev-high-iqr-start-read-cycle
+		quality-dropoff-rev-mean-runmed-decline-end-read-cycle
+		quality-dropoff-rev-mean-runmed-decline-high-value
+		quality-dropoff-rev-mean-runmed-decline-low-value
+		quality-dropoff-rev-mean-runmed-decline-max-contiguous-read-cycles
+		quality-dropoff-rev-mean-runmed-decline-start-read-cycle
+		quality-dropoff-runmed-k
+		raw-total-sequences
+		reads-MQ0
+		reads-QC-failed
+		reads-duplicated
+		reads-mapped
+		reads-paired
+		reads-unmapped
+		reads-unpaired
+		sequences
+		total-length
+
+Feature Importances:
+		0.24	error-rate
+		0.10	insert-size-average
+		0.09	quality-dropoff-rev-mean-runmed-decline-low-value
+		0.06	insert-size-standard-deviation
+		0.05	quality-dropoff-fwd-mean-runmed-decline-low-value
+		0.05	reads-duplicated
+		0.04	reads-unmapped
+		0.04	duplicate-mapped-ratio
+		0.03	quality-dropoff-fwd-mean-runmed-decline-high-value
+		0.03	quality-dropoff-fwd-mean-runmed-decline-max-contiguous-read-cycles
+		0.03	quality-dropoff-rev-mean-runmed-decline-high-value
+		0.02	quality-dropoff-rev-mean-runmed-decline-max-contiguous-read-cycles
+		0.02	pairs-on-different-chromosomes
+		0.02	quality-dropoff-fwd-mean-runmed-decline-start-read-cycle
+		0.02	bases-duplicated
+		0.02	average-quality
+		0.02	quality-dropoff-rev-mean-runmed-decline-start-read-cycle
+		0.01	outward-oriented-pairs
+		0.01	reads-unpaired
+		0.01	quality-dropoff-rev-high-iqr-max-contiguous-read-cycles
+
+CV Score (Fld)	0.91 +/- 0.01 (10)
+
+Decision PDF	pdf/2014-05-05_2213__ALL_NOBASELINE_/
+********

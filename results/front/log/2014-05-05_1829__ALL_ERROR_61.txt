@@ -1,0 +1,24 @@
+Frontier
+********
+Data Dir	/pools/encrypted/sanger/frontier/data/bamcheck_2013dec25_ratios_out/
+AQC File	/pools/encrypted/sanger/frontier/data/crohns-uc-table-a.2013dec25.manual_qc_update.txt
+
+Class Def	fail	pass	warn
+Class Read	1542	9154	2759
+Class Used	1542	9154	2759
+
+Total Read	13455
+Total Used	13455
+
+Param Set	ERROR
+Param Count	1
+Param List:
+		error-rate
+
+Feature Importances:
+		1.00	error-rate
+
+CV Score (Fld)	0.61 +/- 0.02 (10)
+
+Decision PDF	pdf/2014-05-05_1802__ALL_ERROR_/
+********
