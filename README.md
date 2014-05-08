@@ -3,52 +3,52 @@ frontier
 
 ## Overview of Contents
 
-.
-├── Frontier
-│   ├── IO
-│   │   ├── AQCReader.py
-│   │   ├── AbstractReader.py
-│   │   ├── BamcheckReader.py
-│   │   └── __init__.py
-│   │
-│   ├── __init__.py
-│   └── frontier.py
-│
-├── Goldilocks
-│   ├── __init__.py
-│   ├── goldilocks.log
-│   ├── goldilocks.py
-│   ├── goldilocks_regionplot.R
-│   ├── megabase_plot.pdf
-│   ├── megabase_plot.png
-│   ├── megabase_regions
-│   └── paths.g
-│
-├── tests
-│   ├── data
-│   │   ├── goldilocks
-│   │   │   ├── group0_1.q
-│   │   │   ├── group0_2.q
-│   │   │   ├── group1_1.q
-│   │   │   └── paths.g
-│   │   │
-│   │   ├── example.aqc.txt
-│   │   ├── example.aqc.uniq.txt
-│   │   ├── example.bamcheck.baddups.txt
-│   │   ├── example.bamcheck.dups.txt
-│   │   └── example.bamcheck.txt
-│   │
-│   ├── __init__.py
-│   ├── aqcreader.py
-│   ├── bamcheckreader.py
-│   ├── frontier.py
-│   └── goldilocks.py
-│
-├── .gitignore
-├── README.md
-├── front.py
-├── msn_FinalReport_2014.pdf
-└── ratios.py
+.  
+├── Frontier  
+│   ├── IO  
+│   │   ├── AQCReader.py  
+│   │   ├── AbstractReader.py  
+│   │   ├── BamcheckReader.py  
+│   │   └── __init__.py  
+│   │  
+│   ├── __init__.py  
+│   └── frontier.py  
+│  
+├── Goldilocks  
+│   ├── __init__.py  
+│   ├── goldilocks.log  
+│   ├── goldilocks.py  
+│   ├── goldilocks_regionplot.R  
+│   ├── megabase_plot.pdf  
+│   ├── megabase_plot.png  
+│   ├── megabase_regions  
+│   └── paths.g  
+│  
+├── tests  
+│   ├── data  
+│   │   ├── goldilocks  
+│   │   │   ├── group0_1.q  
+│   │   │   ├── group0_2.q  
+│   │   │   ├── group1_1.q  
+│   │   │   └── paths.g  
+│   │   │  
+│   │   ├── example.aqc.txt  
+│   │   ├── example.aqc.uniq.txt  
+│   │   ├── example.bamcheck.baddups.txt  
+│   │   ├── example.bamcheck.dups.txt  
+│   │   └── example.bamcheck.txt  
+│   │  
+│   ├── __init__.py  
+│   ├── aqcreader.py  
+│   ├── bamcheckreader.py  
+│   ├── frontier.py  
+│   └── goldilocks.py  
+│  
+├── .gitignore  
+├── README.md  
+├── front.py  
+├── msn_FinalReport_2014.pdf  
+└── ratios.py  
 
 
 
