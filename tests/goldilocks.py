@@ -1,3 +1,8 @@
+__author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
+__copyright__ = "Copyright (c) Sam Nicholls"
+__version__ = "0.1.0"
+__maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
+
 from Goldilocks.goldilocks import Goldilocks
 import numpy as np
 import unittest

@@ -1,6 +1,6 @@
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
 import argparse
@@ -9,7 +9,7 @@ import numpy as np
 import pydot
 import os
 
-from sklearn.cross_validation import cross_val_score, StratifiedKFold
+from sklearn.cross_validation import cross_val_score, StratifiedKFold, KFold
 from sklearn.externals.six import StringIO
 from sklearn.metrics import confusion_matrix
 from sklearn.tree import DecisionTreeClassifier, export_graphviz
@@ -92,12 +92,6 @@ PARAMETER_SETS = {
         "quality-dropoff-fwd-mean-runmed-decline-low-value",
         "quality-dropoff-rev-mean-runmed-decline-low-value",
     ],
-    "AQCN_MIN": [
-        "error-rate",
-        "fwd-percent-insertions-above-baseline",
-        #"max-total-mean-baseline-deviation",
-        #"max-max-baseline-deviation",
-    ],
     "ERROR": [
         "error-rate"
     ],
@@ -116,6 +110,17 @@ PARAMETER_SETS = {
     "NO_MARP": {
         "exclude": ["mean", "percent", "rate", "average"],
     },
+    "TOP9": [
+        "A-percent-mean-below-baseline",
+        "duplicate-mapped-ratio",
+        "fwd-percent-insertions-above-baseline",
+        "insert-size-average",
+        "max-max-baseline-deviation",
+        "quality-dropoff-fwd-mean-runmed-decline-low-value",
+        "quality-dropoff-rev-mean-runmed-decline-low-value",
+        "rev-percent-insertions-above-baseline",
+        "rev-percent-insertions-below-baseline",
+    ]
 }
 
 DATA_SETS = {
@@ -136,8 +141,11 @@ DATA_SETS = {
     },
 }
 class QC:
+    """Wrapper class for FrontAQC functionality."""
     def __init__(self, args):
-        #TODO Naughtly global-like behaviour going on here...
+        """Initialise QC structures, perform handling on the parameter and
+        data sets and build the Statplexer."""
+
         self.CLASSES = CLASSES
         self.PARAMETER_SETS = PARAMETER_SETS
         self.DATA_SETS = DATA_SETS
@@ -149,6 +157,7 @@ class QC:
         self.parameter_set = args.param_set.upper()
 
         self.no_log = args.no_log
+        self.no_strat = args.no_strat
         self.folds = args.folds
 
         # Handle invalid options
@@ -188,12 +197,13 @@ class QC:
         elif "exclude" in self.PARAMETER_SETS[self.parameter_set]:
             self.parameters = self.statplexer.exclude_parameters(self.PARAMETER_SETS[self.parameter_set]["exclude"])
         else:
-            #TODO Check this is a list, not a dict with incorrect keys
+            #FUTURE Check this is a list, not a dict with incorrect keys
             self.parameters = self.PARAMETER_SETS[self.parameter_set]
 
         self.execute()
 
     def execute(self):
+        """Execute training and testing of decision tree classifiers."""
         data, target, levels = self.statplexer.get_data_by_target(self.parameters, self.override_codes)
         w_data, w_target, w_levels = self.statplexer.get_data_by_target(self.parameters, [CLASSES["warn"]["code"]])
 
@@ -204,10 +214,20 @@ class QC:
 
         # Init
         clf = DecisionTreeClassifier()
+
+        if self.no_strat:
+            # Don't stratify folds, score and exit
+            kf = KFold(len(target), n_folds=self.folds)
+            cv_scores = cross_val_score(clf, data, target, cv=kf)
+            print cv_scores.mean(), cv_scores.std()
+            import sys
+            sys.exit()
+
         kf = StratifiedKFold(target, n_folds=self.folds)
 
         importances = []
         scores = np.zeros(self.folds)
+        depths = np.zeros(self.folds)
 
         count = 0
         if not self.no_log:
@@ -215,7 +235,7 @@ class QC:
             os.makedirs(pdf_path)
 
         confusion = np.zeros([len(levels), len(levels)])
-        wconfusion = np.zeros([len(CLASSES), len(CLASSES)])
+        #wconfusion = np.zeros([len(CLASSES), len(CLASSES)])
         for train_index, test_index in kf:
             X_train, X_test = data[train_index], data[test_index]
             y_train, y_test = target[train_index], target[test_index]
@@ -224,7 +244,6 @@ class QC:
             # Score the fit
             score = clf.score(X_test, y_test)
             scores[count] = score
-            count += 1
 
             # Calculate feature importance
             importance = clf.tree_.compute_feature_importances()
@@ -236,7 +255,11 @@ class QC:
 
             # Compute warnings confusion matrix
             y_pred = clf.predict(w_data)
-            wconfusion += confusion_matrix(w_target, y_pred)
+            #wconfusion += confusion_matrix(w_target, y_pred)
+
+            import recur
+            depths[count] = recur.print_tree(clf)
+            count += 1
 
             # Draw the graph
             if not self.no_log:
@@ -246,10 +269,12 @@ class QC:
                 pdf_filename = pdf_path + str(count) + ".pdf"
                 graph.write_pdf(pdf_filename)
 
-        #cv_scores = cross_val_score(clf, data, target, cv=kf)
+        print("Confusion Matrix:")
         print(confusion/self.folds)
-        print(wconfusion/self.folds)
+        #print(wconfusion/self.folds)
+        print("Average Max Depth:", depths.mean())
 
+        # Calculate feature importances
         imps = {}
         for importance_run in importances:
             for i, entry in enumerate(importance_run):
@@ -263,6 +288,7 @@ class QC:
 
         total_used = len(target)
         if not self.no_log:
+            # Log with Frontier
             log_filename = "log/" + datetime.datetime.now().strftime("%Y-%m-%d_%H%M") + "__" + self.data_set + "_" + self.parameter_set + "_" + str(int(scores.mean() * 100)) + ".txt"
             self.statplexer.write_log(log_filename, pdf_path, self.data_set, self.parameter_set, self.parameters, target, scores, self.folds, importance)
 
@@ -281,4 +307,6 @@ if __name__ == "__main__":
             help=("Number of Cross Validation Folds [10]"))
     parser.add_argument('--no_log', action='store_true',
             help=("Do not output a log file"))
+    parser.add_argument('--no_strat', action='store_true',
+            help=("Do not stratify validation folds"))
     QC(parser.parse_args())

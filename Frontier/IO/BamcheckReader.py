@@ -1,27 +1,28 @@
-"""Read from a samtools stats file"""
-
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
 from Frontier.IO.AbstractReader import AbstractReader
 
 def tidy_key(key):
+    """Sanitize summary number key."""
     key = key[:-1].replace(" ", "-")
     key = key.replace(".", "-")
     key = key.replace("_", "-")
     return key.strip()
 
 class BamcheckReader(AbstractReader):
-    """Wraps a file handler and provides access to stats contents"""
+    """Wraps a file handler and provides access to bamcheckr'd file contents."""
 
     def __init__(self, filepath, CLASSES, auto_close=True):
+        """Initialise the structures for storing data and construct the reader."""
         self.summary = SummaryNumbers()
         self.indel = IndelDistribution()
         super(BamcheckReader, self).__init__(filepath, CLASSES, auto_close, 0)
 
     def process_line(self, line):
+        """Process a record of the bamcheckr'd file."""
         if line[0] == "#":
             # Skip comments
             return
@@ -49,14 +50,17 @@ class BamcheckReader(AbstractReader):
             self.indel.deletes.append(int(fields[3]))
 
     def get_data(self):
+        """Return read summary data."""
         return self.summary
 
 
 class SummaryNumbers(dict):
+    """Wraps a dictionary and provides functionality to search for keys."""
     def __init__(self, *args):
         dict.__init__(self, args)
 
     def search(self, query):
+        """Search the structure for keys matching a given query."""
         matches = []
         for key in self:
             if query.lower() in key.lower():
@@ -64,14 +68,16 @@ class SummaryNumbers(dict):
         return matches
 
 class IndelDistribution(object):
-
+    """Novel object to hold a trio of lengths, inserts and deletes counters."""
     def __init__(self):
         self.lengths = []
         self.inserts = []
         self.deletes = []
 
     def total_inserts(self):
+        """Return sum of total inserts."""
         return sum(self.inserts)
 
     def total_deletes(self):
+        """Return sum of total deletes."""
         return sum(self.deletes)

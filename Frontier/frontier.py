@@ -1,6 +1,6 @@
 __author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
 __copyright__ = "Copyright (c) Sam Nicholls"
-__version__ = "0.0.1"
+__version__ = "0.1.0"
 __maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
 
 import numpy as np
@@ -8,6 +8,11 @@ import os
 import sys
 
 def classify_label(classes, label):
+    """
+    Attempt to classify a label by comparing a given string to each set of
+    names defined in classes, an exact match will return the relevant canonical
+    class label.
+    """
     for cl in classes:
         for name in classes[cl]["names"]:
             if name.lower() == label.lower():
@@ -15,6 +20,7 @@ def classify_label(classes, label):
     raise Exception("Unknown Label Class: %s" % label)
 
 def encode_class(classes, class_label):
+    """Given a canonical class label, return its code."""
     if not class_label in classes:
         raise Exception("Unknown Class: %s" % class_label)
 
@@ -23,12 +29,15 @@ def encode_class(classes, class_label):
     return classes[class_label]["code"]
 
 def decode_class(classes, class_code):
+    """ Given a code, return the canonical class label (or its recoded label)."""
     for cl in classes:
         if classes[cl]["code"] == class_code and "_recode" not in classes[cl]:
             return cl
     raise Exception("Unknown Label Code: %s" % class_code)
 
 def count_class(classes, class_label):
+    """Increment the _count in classes for a particular class,
+    given its canonical label."""
     if not class_label in classes:
         raise Exception("Unknown Class: %s" % class_label)
 
@@ -37,8 +46,13 @@ def count_class(classes, class_label):
     classes[class_label]["_count"] += 1
 
 class Statplexer(object):
+    """An interface for the loading, storage and retrieval of data and targets."""
 
     def __init__(self, data_dir, target_path, CLASSES, DATA_READER_CLASS, TARGET_READER_CLASS):
+        """
+        Initialise the Statplexer _data and _target structures and pass the user
+        provided data and target path to the load_data function.
+        """
         self.data_dir = data_dir
         self.target_path = target_path
 
@@ -53,8 +67,9 @@ class Statplexer(object):
             self.load_data(data_dir, target_path, DATA_READER_CLASS, TARGET_READER_CLASS)
 
     def load_data(self, data_dir, target_path, DATA_READER_CLASS, TARGET_READER_CLASS):
-        #TODO Better handling for missing targets
-        #TODO Better handling to ensure all observations have all variables
+        """Populate the _data and _target structures using the specified readers."""
+        #FUTURE Better handling for missing targets
+        #FUTURE Better handling to ensure all observations have all variables
 
         # targets written to local variable rather than self._targets class
         # variable to ensure only targets for observations actually seen in
@@ -66,7 +81,7 @@ class Statplexer(object):
             for f in files:
                 fpath = os.path.join(root, f)
 
-                #TODO Still using filename for _id
+                #FUTURE Still using filename for _id, allow readers to specify their own
                 _id = f.split(".")[0]
                 if _id in self._data:
                     print "[WARN] Duplicate observation %s found in %s" % (_id, fpath)
@@ -80,12 +95,12 @@ class Statplexer(object):
                 else:
                     print "[WARN] INPUT missing TARGET"
 
-        #TODO Warn when no files are input
-
         # Test parameter variances and output warning if zero
         self._test_variance()
 
     def _test_variance(self):
+        """Test the variance of each parameter over all observations to ensure it
+        is non-zero, otherwise print a warning."""
         parameters = self.list_parameters()
         variances = np.zeros(len(parameters))
         means = np.zeros(len(parameters))
@@ -102,9 +117,11 @@ class Statplexer(object):
                 means[j] = (last_mean + (obs_val - last_mean)/(i+1))
                 variances[j] = last_variance + (obs_val - last_mean)*(obs_val - means[j])
 
-        # TODO Sample or population (n-1 vs n, where n is i+1)?
+        # NOTE Use sample or population? (n-1 vs n, where n is i+1)
         #      Although technically moot as we only care about 0 and the
         #      absolute difference would be relatively trivial for larger n
+
+        #FUTURE Store means and variances
         variances /= i+1
         for i, variance in enumerate(variances):
             if variance == 0.0:
@@ -112,11 +129,13 @@ class Statplexer(object):
                         % (parameters[i], means[i]))
 
     def __len__(self):
+        """Return the number of observations stored in _data."""
         return len(self._data)
 
     def list_parameters(self):
-        #TODO Need better method of getting all parameters than
-        #     breaking out of counting the first observation...
+        """Return an ordered list of all parameters."""
+        #FUTURE Need better method of getting all parameters than
+        #       breaking out of counting the first observation...
         parameters = []
         for observation in sorted(self._data):
             for r in self._data[observation]:
@@ -126,6 +145,8 @@ class Statplexer(object):
         return sorted(parameters)
 
     def find_parameters(self, queries):
+        """Given a list of input strings, return a list of parameters which
+        contain any of those strings as a substring."""
         parameters = []
         for observation in sorted(self._data):
             for r in self._data[observation]:
@@ -138,6 +159,10 @@ class Statplexer(object):
         return sorted(parameters)
 
     def exclude_parameters(self, queries, exact=False):
+        """
+        Given a list of input strings, return a list of parameters which do not
+        contain any of the input strings as a substring, or if needed, an exact match.
+        """
         parameters = self.list_parameters()
         to_remove = []
         for query in queries:
@@ -149,11 +174,16 @@ class Statplexer(object):
                     if query.lower() in r.lower():
                         to_remove.append(r)
 
+        to_remove = set(to_remove)
         for key in to_remove:
             parameters.remove(key)
         return sorted(parameters)
 
     def get_data_by_parameters(self, names):
+        """
+        Return data for each observation, but only include columns
+        for each parameter in the given list.
+        """
         np_array = np.empty([len(self),len(names)])
         for i, observation in enumerate(sorted(self._data)):
             observation_n = np.zeros(len(names))
@@ -163,7 +193,11 @@ class Statplexer(object):
         return np_array
 
     def get_data_by_target(self, names, targets):
-
+        """
+        Return data for each observation that have been classified in one of the
+        targets specified and additionally only return columns for the
+        parameters in the given list.
+        """
         total = 0
         for _id in self._targets:
             target = self._targets[_id]
@@ -197,14 +231,21 @@ class Statplexer(object):
         return data_np_array, targ_np_array, sorted(levels)
 
     def get_targets(self):
+        """
+        Return all targets, sorted by id.
+        """
         np_array = np.empty([len(self)])
         for i, observation in enumerate(sorted(self._data)):
-            #TODO Hard coded handling for file names being used as keys
+            #FUTURE Currently using handling for file names being used as keys
             _id = observation.split(".")[0]
             np_array[i] = self._targets[_id]
         return np_array
 
     def count_targets_by_class(self, targets=None):
+        """
+        For a set of codes, return the number of observations stored in the _data
+        whose _targets match those code.
+        """
         counts = {}
         for class_label in self._classes:
             counts[class_label] = 0
@@ -218,6 +259,7 @@ class Statplexer(object):
         return counts
 
     def write_log(self, log_filename, pdf_filename, data_set, param_set, parameters, used_targets, scores, folds, importance):
+        """Write results to a log file."""
 
         def write(message):
             sys.stdout.write(message)

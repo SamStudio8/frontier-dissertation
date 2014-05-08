@@ -9,17 +9,20 @@ d = read.table(file="megabase_regions",
 )
 
 type_labeller <- function(variable,value){
-    value[value==0] <- "GWAS"
-    value[value==1] <- "iCHIP"
+    if(variable=="Type"){
+        value[value==0] <- "GWAS"
+        value[value==1] <- "iCHIP"
+    }
     return(value)
 }
 
 p <- ggplot(d, aes(x = Region, y = NumVariants, colour=factor(Chromosome)))
 p <- p + geom_point()
-p <- p + facet_grid(~ Type, labeller=type_labeller)
+p <- p + facet_grid(Type ~ Chromosome, labeller=type_labeller)
 p <- p + guides(col = guide_legend(title="Chr#"))
 p <- p + xlab("Megabase Region") + ylab("Number of Variants")
 #p <- p + scale_y_continuous(limits = c(0, 2000), oob=squish)
+p <- p + theme(axis.text.x = element_blank()) + scale_x_continuous(breaks=NULL)
 
 ggsave(plot=p,
        filename="megabase_plot.pdf",

@@ -1,3 +1,8 @@
+__author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
+__copyright__ = "Copyright (c) Sam Nicholls"
+__version__ = "0.1.0"
+__maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
+
 from Frontier import frontier as f
 import unittest
 
@@ -51,10 +56,6 @@ class TestFrontierUtils(unittest.TestCase):
 
     def test_decode_unknown_class(self):
         self.assertRaises(Exception, f.decode_class, CLASSES, 5)
-
-    #TODO
-    def test_decode_recoded_class(self):
-        pass
 
     def test_count_class(self):
         CLASSES_COPY = CLASSES.copy()

@@ -1,9 +1,18 @@
+__author__ = "Sam Nicholls <sn8@sanger.ac.uk>"
+__copyright__ = "Copyright (c) Sam Nicholls"
+__version__ = "0.1.0"
+__maintainer__ = "Sam Nicholls <sam@samnicholls.net>"
+
 import numpy as np
 from math import floor, ceil
 
 class Goldilocks(object):
+    """A class for reading Variant Query files and locating regions on a genome
+    with particular variant density properties."""
 
     def __init__(self, paths_file, length=1000000, stride=500000, med_window=12.5):
+        """Initialise the internal structures and set arguments based on user input."""
+
         self.files = {}         # Files to read variants from (path and group)
 
         self.chr_max_len = {}   # Map chromosomes to the largest variant position
@@ -24,29 +33,43 @@ class Goldilocks(object):
         self.candidates = []    # Lists regions that meet the criteria for final
                                 # enrichment and processing
 
+        self.winners = []       # Lists regions that pass the final filter and
+                                # enrichment processes
+
         self.paths_filename = paths_file
 
         self.LENGTH = length
-        self.STRIDE = stride # NOTE STRIDE must be non-zero, 1 is a bad idea (TM)
+        self.STRIDE = stride # NOTE STRIDE must be non-zero, 1 is very a bad idea (TM)
         self.MED_WINDOW = med_window # Middle 25%, can also be overriden later
         self.GRAPHING = False
 
         self.load_variant_files(self.paths_filename)
 
 
+    # Future: Ensure the file is valid.
     def load_variant_files(self, paths_filename):
+        """Load and process the paths file."""
+
         path_list = open(paths_filename)
         files = {}
         current_group = None
         for line in path_list:
             if line.startswith("#"):
                 current_group = line[1:].strip()
+
+                if current_group in self.groups:
+                    raise Exception("[FAIL] Group %s has already been processed" % current_group)
+
                 self.groups[current_group] = {}
                 self.group_buckets[current_group] = {}
                 self.group_counts[current_group] = []
                 continue
             if current_group is not None:
                 fields = line.split("\t")
+
+                if fields[0] in self.files:
+                    raise Exception("[FAIL] File %s has already been processed" % fields[0])
+
                 self.files[fields[0]] = {
                     "path": fields[1].strip(),
                     "group": current_group
@@ -54,6 +77,7 @@ class Goldilocks(object):
         path_list.close()
 
     def load_variants_from_file(self, path, group):
+        """Load each variant position record from a Variant Query file into a given group."""
 
         f = open(path)
         for line in f:
@@ -82,6 +106,8 @@ class Goldilocks(object):
         f.close()
 
     def load_chromosome(self, size, locations):
+        """Return a NumPy array containing 1 for position elements where a variant
+        exists and 0 otherwise."""
         chro = np.zeros(size+1, np.int8)
 
         # Populate the chromosome array with 1 for each position a variant exists
@@ -91,6 +117,9 @@ class Goldilocks(object):
         return chro
 
     def search_regions(self):
+        """Conduct a census of the regions on each chromosome using the user
+        defined length and stride. Counting the number of variants present for
+        each group."""
         regions = {}
         region_i = 0
         for chrno, size in sorted(self.chr_max_len.items()):
@@ -140,8 +169,10 @@ class Goldilocks(object):
                 region_i += 1
         return regions
 
-    # TODO[Future] Hard coded GWAS group
+    # [Future] Hard coded default GWAS group
     def initial_filter(self, group="gwas", window=None):
+        """Filter regions based on the distance from the median density of a given
+        variant group."""
         if window is None:
             window = self.MED_WINDOW
         else:
@@ -162,12 +193,21 @@ class Goldilocks(object):
                 candidates += self.group_buckets[group][bucket]
         return candidates
 
-    # TODO[Future] Hard coded iCHIP group
+    # [Future] Hard coded default iCHIP group
     def enrich(self, filter_group="gwas", enrich_group="ichip"):
+        """Sort regions based on proximity to the absolute distance from the median
+        of the filter_group and then rank based on the maximum density of a given
+        enrichment group."""
+        winners = []
+
         # Enrich selection by choosing a region with median GWAS and maximum iCHIP
         print "WND\tGWAS\tiCHIP\tCHR\tPOSITIONS"
         q_median = np.percentile(np.asarray(self.group_counts[filter_group]), 50)
-        for region in sorted(self.regions, key=lambda x: abs(self.regions[x]["group_counts"][filter_group] - q_median)):
+
+        for region in sorted(
+            self.regions,
+            key=lambda x: (abs(self.regions[x]["group_counts"][filter_group] - q_median), self.regions[x]["group_counts"][enrich_group])
+        ):
             if region in self.candidates:
                 if self.regions[region]["group_counts"][enrich_group] > self.regions[region]["group_counts"][filter_group]:
                     print "%d\t%d\t%d\t%s\t%10d - %10d" % (region,
@@ -177,15 +217,18 @@ class Goldilocks(object):
                                                     self.regions[region]["pos_start"],
                                                     self.regions[region]["pos_end"],
                     )
+                    winners.append(self.regions[region])
+        return winners
 
     def execute(self):
+        """Execute Goldilocks search."""
         for i, f in enumerate(self.files):
             print "[READ] %s [%d of %d]" % (self.files[f]["path"], i+1, len(self.files))
             self.load_variants_from_file(self.files[f]["path"], self.files[f]["group"])
 
         self.regions = self.search_regions()
         self.candidates = self.initial_filter()
-        self.candidates = self.enrich()
+        self.winners = self.enrich()
 
 if __name__ == "__main__":
     Goldilocks("paths.g").execute()
