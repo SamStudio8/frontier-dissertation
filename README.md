@@ -50,6 +50,18 @@ frontier
     │   ├── frontier.py                         Frontier and Frontier utils testing suite
     │   └── goldilocks.py                       Goldilocks testing suite
     │
+    ├── results
+    │   ├── frontier
+    │   │   ├── log
+    │   │   │   ├──
+    │   │   │   └──
+    │   │   │
+    │   │   └── pdf
+    │   │       ├──
+    │   │       └──
+    │   │
+    │   ├── goldilocks
+    │
     ├── .gitignore
     ├── README.md
     ├── front.py                                Script using Frontier and scikit-learn for analysis
@@ -63,7 +75,9 @@ frontier
 
 ## Installation
 
-Frontier and the front.py script both require scikit-learn and numpy. Goldilocks requires numpy.
+The 'Fr
+
+and the 'front.py' script both require scikit-learn and numpy. Goldilocks requires numpy.
 
     pip install scikit-learn numpy
 
