@@ -88,11 +88,11 @@ frontier
 Please see the following for examples of contributions to external projects made as a result of this project:
 
 ### samtools
-[samtools #200](https://github.com/samtools/samtools/pull/200)  
-[samtools #188](https://github.com/samtools/samtools/pull/188)
+[samtools #200](https://github.com/samtools/samtools/pull/200): **Fix arbitrary memory leaks in merge and split test harnesses**  
+[samtools #188](https://github.com/samtools/samtools/pull/188): **Add -b option to samtools merge manpage**
 
 ### bamcheckr
-[seq_autoqc #2](https://github.com/wtsi-hgi/seq_autoqc/pull/2)
+[seq_autoqc #2](https://github.com/wtsi-hgi/seq_autoqc/pull/2): **Fix quality_dropoff.r**
 
 ## Installation
 
