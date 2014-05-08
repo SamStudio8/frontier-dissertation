@@ -12,43 +12,52 @@ frontier
     │   │   └── __init__.py                     Package definition
     │   │
     │   ├── __init__.py                         Package definition
-    │   └── frontier.py                         Frontier utilities and Statplexer class
+    │   └── frontier.py                         Frontier module containing classification
+    │                                             utilities and the Statplexer class
     │
     ├── Goldilocks                              
     │   ├── __init__.py                         Package definition
     │   ├── goldilocks.log                      Latest log file from Goldilocks execution
     │   ├── goldilocks.py                       Goldilocks module
-    │   ├── goldilocks_regionplot.R             R script for plotting Chapter 9 diagrams
-    │   ├── megabase_plot.pdf                   PDF containing Chapter 9 diagram
-    │   ├── megabase_plot.png                   PNG containing Chapter 9 diagram
-    │   ├── megabase_regions                    Input data for regionplot.R
-    │   └── paths.g                             Input data for goldilocks.py
+    │   ├── goldilocks_regionplot.R             R script for plotting variant density vs.
+    │   │                                         region location as displayed in Chap.9
+    │   ├── megabase_plot.pdf                   PDF containing Figure 9.2
+    │   ├── megabase_plot.png                   PNG containing Figure 9.2
+    │   ├── megabase_regions                    Input data for regionplot.R script
+    │   └── paths.g                             Paths File used for goldilocks.py
     │
     ├── tests
     │   ├── data
-    │   │   ├── goldilocks                      Paths and Variant Query Files for testing
-    │   │   │   ├── group0_1.q
-    │   │   │   ├── group0_2.q
-    │   │   │   ├── group1_1.q
-    │   │   │   └── paths.g
+    │   │   ├── goldilocks                      
+    │   │   │   ├── group0_1.q                  }
+    │   │   │   ├── group0_2.q                  } Variant Query Files for testing Goldilocks
+    │   │   │   ├── group1_1.q                  }
+    │   │   │   └── paths.g                     Paths File locating VQF testing files
     │   │   │
-    │   │   ├── example.aqc.txt                 AQC Matrix example with non varied intraclass labels
-    │   │   ├── example.aqc.uniq.txt            AQC Matrix example with unique intraclass labels
-    │   │   ├── example.bamcheck.baddups.txt    BAMcheckr'd example with non matching duplicate entries
-    │   │   ├── example.bamcheck.dups.txt       BAMcheckr'd example with duplicate entries
-    │   │   └── example.bamcheck.txt            BAMcheckr'd example
+    │   │   ├── example.aqc.txt                 AQC Matrix example with non-consistent
+    │   │   │                                     intraclass target labels
+    │   │   ├── example.aqc.uniq.txt            AQC Matrix example with consistent
+    │   │   │                                     intraclass target labels
+    │   │   ├── example.bamcheck.baddups.txt    BAMcheckr'd example containing non matching
+    │   │   │                                     duplicate summary number entries
+    │   │   ├── example.bamcheck.dups.txt       BAMcheckr'd example with consistent
+    │   │   │                                     duplicated summary number entries
+    │   │   └── example.bamcheck.txt            Valid BAMcheckr'd example
     │   │
     │   ├── __init__.py                         Package definition
     │   ├── aqcreader.py                        AQCReader testing suite
     │   ├── bamcheckreader.py                   BamcheckReader testing suite
-    │   ├── frontier.py                         Frontier and Frontier utilities testing suite
+    │   ├── frontier.py                         Frontier and Frontier utils testing suite
     │   └── goldilocks.py                       Goldilocks testing suite
     │
     ├── .gitignore
     ├── README.md
     ├── front.py                                Script using Frontier and scikit-learn for analysis
+    │                                             of auto_qc data and targets for training, testing
+    │                                             and documentation of decision tree classifiers.
     ├── msn_FinalReport_2014.pdf                The final version of the thesis write up
-    └── ratios.py                               A proof of concept file showing bamcheckr function can be implemented by Frontier
+    └── ratios.py                               A proof of concept file showing bamcheckr
+                                                  function can be implemented by Frontier
 
 
 
