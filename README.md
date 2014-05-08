@@ -83,6 +83,16 @@ frontier
                                                   function can be implemented by Frontier
 
 
+## Other Contributions
+
+Please see the following for examples of contributions to external projects made as a result of this project:
+
+### samtools
+[samtools #200](https://github.com/samtools/samtools/pull/200)  
+[samtools #188](https://github.com/samtools/samtools/pull/188)
+
+### bamcheckr
+[seq_autoqc #2](https://github.com/wtsi-hgi/seq_autoqc/pull/2)
 
 ## Installation
 
