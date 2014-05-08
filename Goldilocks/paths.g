@@ -1,6 +1,6 @@
 # gwas
-cd-gwas	../../vcf/cd-seq.vcf.gz.q
-uc-gwas	../../vcf/uc-seq.vcf.gz.q
+cd-gwas	/pools/encrypted/sanger/frontier/data/vcf/cd-seq.vcf.gz.q
+uc-gwas	/pools/encrypted/sanger/frontier/data/vcf/uc-seq.vcf.gz.q
 # ichip
-cd-ichip	../../vcf/cd.ichip.vcf.gz.q
-uc-ichip	../../vcf/uc.ichip.vcf.gz.q
+cd-ichip	/pools/encrypted/sanger/frontier/data/vcf/cd.ichip.vcf.gz.q
+uc-ichip	/pools/encrypted/sanger/frontier/data/vcf/uc.ichip.vcf.gz.q
